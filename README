@@ -1,0 +1,10 @@
+Todo:
+
+http://qmlbook.org/ch11/index.html
+http://doc.qt.io/qt-5/qtqml-networkaccessmanagerfactory-example.html
+http://doc.qt.digia.com/qq/32/qq32-webkit-protocols.html
+https://qt-project.org/doc/qt-5-snapshot/qtqml-syntax-directoryimports.html
+
+
+qml: import "vein://127.0.0.1:2345" 1.0 as Vein
+NetworkAccessManager: download qml files & setup value transfer via events over network
