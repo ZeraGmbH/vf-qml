@@ -10,6 +10,12 @@ TEMPLATE = lib
 VEIN_DEP_EVENT = 1
 VEIN_DEP_COMP = 1
 
+HEADERS +=\
+    qml-veinentity_global.h \
+    entitycomponentmap.h \
+    veinqml.h \
+    veinqmlwrapper.h
+
 exists( ../../project-paths.pri ) {
   include(../../project-paths.pri)
 }
@@ -27,12 +33,6 @@ SOURCES += \
     entitycomponentmap.cpp \
     veinqml.cpp \
     veinqmlwrapper.cpp
-
-HEADERS +=\
-        qml-veinentity_global.h \
-    entitycomponentmap.h \
-    veinqml.h \
-    veinqmlwrapper.h
 
 unix {
     target.path = /usr/lib
