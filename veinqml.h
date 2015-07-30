@@ -45,7 +45,7 @@ namespace VeinApiQml
     static VeinQml *getStaticInstance();
     static void setStaticInstance(VeinQml *t_instance);
 
-    void setRequiredIds(QList<int> t_requiredEntityIds);
+    Q_INVOKABLE void setRequiredIds(QList<int> t_requiredEntityIds);
 
     // EventSystem interface
   public:
