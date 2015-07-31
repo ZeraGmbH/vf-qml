@@ -34,25 +34,37 @@ namespace VeinApiQml
     explicit EntityComponentMap(int t_entityId, const QJsonObject &t_entityIntrospection, QObject *t_parent=0);
 
     enum class DataState : int {
-      ECM_READY = 0,
-      ECM_REMOVED = 1
+      ECM_NONE = -1, /**< uninitialized */
+      ECM_PENDING = 0, /**< introspection is available but values are not initialized */
+      ECM_READY = 1, /**< everything is available */
+      ECM_REMOVED = 2, /**< the entity has been removed from the remote end */
     };
     Q_ENUMS(DataState)
 
     Q_PROPERTY(DataState state READ state NOTIFY sigStateChanged)
 
+    /**
+     * @brief processComponentData
+     * @param t_cData
+     */
     void processComponentData(VeinComponent::ComponentData *t_cData);
 
     DataState state() const;
+    /**
+     * @brief setState
+     * @param t_dataState
+     * @note not callable from QML
+     */
     void setState(DataState t_dataState);
 
     int entityId() const;
 
   signals:
     void sigSendEvent(QEvent *t_cEvent);
-    void sigLoadedChanged(bool t_loaded);
+    void sigLoadedChanged(int t_entityId);
 
     void sigStateChanged(DataState t_state);
+
 
   protected:
     /**
@@ -67,9 +79,9 @@ namespace VeinApiQml
      */
     void loadEntityData();
 
-
+    QList<QString> m_pendingValues;
     QJsonObject m_entityIntrospection;
-    DataState m_state = DataState::ECM_READY;
+    DataState m_state = DataState::ECM_PENDING;
     int m_entityId=-1;
   };
 }

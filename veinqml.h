@@ -65,6 +65,9 @@ namespace VeinApiQml
      */
     void reconnect();
 
+  private slots:
+    void onEntityLoaded(int t_entityId);
+
   private:
     int idFromEntityName(const QString &t_entityName) const;
 

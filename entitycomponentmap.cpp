@@ -3,6 +3,8 @@
 #include <ve_commandevent.h>
 #include <vcmp_componentdata.h>
 
+#include <QString>
+
 using namespace VeinEvent;
 using namespace VeinComponent;
 
@@ -15,7 +17,6 @@ namespace VeinApiQml
     m_entityIntrospection(t_entityIntrospection),
     m_entityId(t_entityId)
   {
-    loadEntityData();
   }
 
   void EntityComponentMap::processComponentData(VeinComponent::ComponentData *t_cData)
@@ -34,6 +35,20 @@ namespace VeinApiQml
         clear(t_cData->componentName());
         break;
       }
+      case VeinComponent::ComponentData::Command::CCMD_FETCH:
+      {
+        if(m_pendingValues.contains(t_cData->componentName()))
+        {
+          qCDebug(VEIN_API_QML_VERBOSE) << "Fetched value" << t_cData->componentName() << t_cData->newValue();
+          insert(t_cData->componentName(), t_cData->newValue());
+          m_pendingValues.removeAll(t_cData->componentName());
+          if(m_pendingValues.isEmpty())
+          {
+            emit sigLoadedChanged(m_entityId);
+          }
+        }
+        break;
+      }
       default:
       {
         break;
@@ -49,6 +64,10 @@ namespace VeinApiQml
   void EntityComponentMap::setState(EntityComponentMap::DataState t_dataState)
   {
     m_state = t_dataState;
+    if(m_state == DataState::ECM_PENDING)
+    {
+      loadEntityData();
+    }
     emit sigStateChanged(m_state);
   }
 
@@ -81,11 +100,26 @@ namespace VeinApiQml
 
   void EntityComponentMap::loadEntityData()
   {
+    CommandEvent *cEvent = 0;
+    ComponentData *cData = 0;
+
     QVariantMap tmpValues = m_entityIntrospection.toVariantMap();
-    foreach(QString tmpKey, tmpValues.keys())
+    QList<QString> tmpKeys = tmpValues.value(QString("components")).toStringList();
+    m_pendingValues.append(tmpKeys);
+    foreach(QString tmpKey, tmpKeys)
     {
-      insert(tmpKey, tmpValues.value(tmpKey));
-      qCDebug(VEIN_API_QML_INTROSPECTION) << QString("%1: ").arg(m_entityId) << tmpKey << tmpValues.value(tmpKey);
+      insert(tmpKey, QVariant());
+
+      cData = new VeinComponent::ComponentData();
+      cData->setEntityId(m_entityId);
+      cData->setCommand(VeinComponent::ComponentData::Command::CCMD_FETCH);
+      cData->setEventOrigin(VeinComponent::ComponentData::EventOrigin::EO_LOCAL);
+      cData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
+      cData->setComponentName(tmpKey);
+      cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, cData);
+      qCDebug(VEIN_API_QML_INTROSPECTION) << "Fetching entity data for entityId:" << m_entityId << "component:" << tmpKey << "event:" << cEvent;
+
+      emit sigSendEvent(cEvent);
     }
   }
 }

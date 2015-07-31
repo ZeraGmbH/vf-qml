@@ -160,17 +160,8 @@ namespace VeinApiQml
               EntityComponentMap *eMap = new EntityComponentMap(entityId, iData->jsonData(), this);
               m_entities.insert(entityId, eMap);
               connect(eMap, &EntityComponentMap::sigSendEvent, this, &VeinQml::sigSendEvent);
-            }
-            if(m_requiredIds.contains(entityId))
-            {
-              qCDebug(VEIN_API_QML) << "Fetched required entity:" << entityId;
-              m_requiredIds.removeAll(entityId);
-              if(m_requiredIds.isEmpty())
-              {
-                qCDebug(VEIN_API_QML) << "All required entities resolved";
-                m_state = ConnectionState::VQ_LOADED;
-                emit sigStateChanged(m_state);
-              }
+              connect(eMap, &EntityComponentMap::sigLoadedChanged, this, &VeinQml::onEntityLoaded);
+              eMap->setState(EntityComponentMap::DataState::ECM_PENDING);
             }
             break;
           }
@@ -194,6 +185,21 @@ namespace VeinApiQml
     if(m_lastConnection.isNull() == false && m_lastPort >0)
     {
       connectToServer(m_lastConnection, m_lastPort);
+    }
+  }
+
+  void VeinQml::onEntityLoaded(int t_entityId)
+  {
+    if(m_requiredIds.contains(t_entityId))
+    {
+      qCDebug(VEIN_API_QML) << "Fetched required entity:" << t_entityId;
+      m_requiredIds.removeAll(t_entityId);
+      if(m_requiredIds.isEmpty())
+      {
+        qCDebug(VEIN_API_QML) << "All required entities resolved";
+        m_state = ConnectionState::VQ_LOADED;
+        emit sigStateChanged(m_state);
+      }
     }
   }
 
