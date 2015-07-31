@@ -46,6 +46,18 @@ namespace VeinApiQml
     return retVal;
   }
 
+  bool VeinQml::hasEntity(const QString &t_entityName) const
+  {
+    bool retVal = false;
+    int entityId = idFromEntityName(t_entityName);
+
+    if(entityId>=0 && m_entities.contains(entityId))
+    {
+      retVal = true;
+    }
+    return retVal;
+  }
+
 
 
   VeinQml *VeinQml::getStaticInstance()
@@ -194,12 +206,16 @@ namespace VeinApiQml
     {
       qCDebug(VEIN_API_QML) << "Fetched required entity:" << t_entityId;
       m_requiredIds.removeAll(t_entityId);
-      if(m_requiredIds.isEmpty())
+      if(m_state != ConnectionState::VQ_LOADED)
       {
-        qCDebug(VEIN_API_QML) << "All required entities resolved";
-        m_state = ConnectionState::VQ_LOADED;
-        emit sigStateChanged(m_state);
+        if(m_requiredIds.isEmpty())
+        {
+          qCDebug(VEIN_API_QML) << "All required entities resolved";
+          m_state = ConnectionState::VQ_LOADED;
+          emit sigStateChanged(m_state);
+        }
       }
+      emit sigEntityAvailable(nameFromEntityId(t_entityId));
     }
   }
 
@@ -220,6 +236,17 @@ namespace VeinApiQml
     }
     return retVal;
   }
+
+  QString VeinQml::nameFromEntityId(int t_entityId) const
+  {
+    QString retVal;
+    if(m_entities.contains(t_entityId))
+    {
+      retVal = m_entities.value(t_entityId)->value("EntityName").value<QString>(); ///< @todo remove hardcoded
+    }
+    return retVal;
+  }
+
 
   VeinQml *VeinQml::m_staticInstance = 0;
 }

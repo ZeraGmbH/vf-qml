@@ -37,6 +37,7 @@ namespace VeinApiQml
     ConnectionState state() const;
 
     Q_INVOKABLE EntityComponentMap *getEntity(const QString &t_entityName) const;
+    Q_INVOKABLE bool hasEntity(const QString &t_entityName) const;
 
     /**
      * @brief Required by qmlRegisterSingletonType
@@ -56,6 +57,7 @@ namespace VeinApiQml
 
   signals:
     void sigStateChanged(ConnectionState t_state);
+    void sigEntityAvailable(QString t_entityName);
 
   public slots:
     void connectToServer(QHostAddress t_hostAddress, quint16 t_port);
@@ -70,6 +72,7 @@ namespace VeinApiQml
 
   private:
     int idFromEntityName(const QString &t_entityName) const;
+    QString nameFromEntityId(int t_entityId) const;
 
     ConnectionState m_state = ConnectionState::VQ_IDLE;
 
