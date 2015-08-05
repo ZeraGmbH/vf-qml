@@ -9,6 +9,7 @@ TEMPLATE = lib
 #dependencies
 VEIN_DEP_EVENT = 1
 VEIN_DEP_COMP = 1
+VEIN_DEP_HELPER = 1
 
 HEADERS +=\
     qml-veinentity_global.h \

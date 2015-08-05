@@ -26,7 +26,7 @@ namespace VeinApiQml
       case VeinComponent::ComponentData::Command::CCMD_ADD:
       case VeinComponent::ComponentData::Command::CCMD_SET:
       {
-        qCDebug(VEIN_API_QML_VERBOSE) << "Updated value" << t_cData->componentName() << t_cData->newValue();
+        vCDebug(VEIN_API_QML_VERBOSE) << "Updated value" << t_cData->componentName() << t_cData->newValue();
         insert(t_cData->componentName(), t_cData->newValue());
         break;
       }
@@ -39,7 +39,7 @@ namespace VeinApiQml
       {
         if(m_pendingValues.contains(t_cData->componentName()))
         {
-          qCDebug(VEIN_API_QML_VERBOSE) << "Fetched value" << t_cData->componentName() << t_cData->newValue();
+          vCDebug(VEIN_API_QML_VERBOSE) << "Fetched value" << t_cData->componentName() << t_cData->newValue();
           insert(t_cData->componentName(), t_cData->newValue());
           m_pendingValues.removeAll(t_cData->componentName());
           if(m_pendingValues.isEmpty())
@@ -117,7 +117,7 @@ namespace VeinApiQml
       cData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
       cData->setComponentName(tmpKey);
       cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, cData);
-      qCDebug(VEIN_API_QML_INTROSPECTION) << "Fetching entity data for entityId:" << m_entityId << "component:" << tmpKey << "event:" << cEvent;
+      vCDebug(VEIN_API_QML_INTROSPECTION) << "Fetching entity data for entityId:" << m_entityId << "component:" << tmpKey << "event:" << cEvent;
 
       emit sigSendEvent(cEvent);
     }

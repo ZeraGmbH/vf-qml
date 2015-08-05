@@ -2,7 +2,7 @@
 #define QMLVEINENTITY_GLOBAL_H
 
 #include <QtCore/qglobal.h>
-#include <QLoggingCategory>
+#include "vh_logging.h"
 
 Q_DECLARE_LOGGING_CATEGORY(VEIN_API_QML)
 Q_DECLARE_LOGGING_CATEGORY(VEIN_API_QML_VERBOSE)

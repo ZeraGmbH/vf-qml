@@ -76,7 +76,7 @@ namespace VeinApiQml
   void VeinQml::setRequiredIds(QList<int> t_requiredEntityIds)
   {
     m_requiredIds = t_requiredEntityIds; /// @todo maybe only append the new ids? send unsubscribe events for removed ids... etc.
-    qCDebug(VEIN_API_QML) << "Set required ids to:" << t_requiredEntityIds;
+    vCDebug(VEIN_API_QML) << "Set required ids to:" << t_requiredEntityIds;
     foreach(int newId, m_requiredIds) /// @todo currently it's possible to send subscription events for entities already subscribed to
     {
       EntityData *eData = new EntityData();
@@ -102,7 +102,7 @@ namespace VeinApiQml
 
       if(cEvent != 0 && cEvent->eventSubtype() == CommandEvent::EventSubtype::NOTIFICATION)
       {
-        qCDebug(VEIN_API_QML_VERBOSE) << "Processing command event:" << cEvent << cEvent->eventData()->type();
+        vCDebug(VEIN_API_QML_VERBOSE) << "Processing command event:" << cEvent << cEvent->eventData()->type();
 
         /// @todo add support for network events (connected / disconnected / error)
         switch (cEvent->eventData()->type())
@@ -164,11 +164,11 @@ namespace VeinApiQml
             iData = static_cast<IntrospectionData *>(cEvent->eventData());
             retVal = true;
             int entityId = iData->entityId();
-            qCDebug(VEIN_API_QML) << "Received introspection data for entity:" << entityId;
+            vCDebug(VEIN_API_QML) << "Received introspection data for entity:" << entityId;
 
             if(m_entities.contains(entityId) == false)
             {
-              qCDebug(VEIN_API_QML) << "added introspection for entity:" << entityId;
+              vCDebug(VEIN_API_QML) << "added introspection for entity:" << entityId;
               EntityComponentMap *eMap = new EntityComponentMap(entityId, iData->jsonData(), this);
               m_entities.insert(entityId, eMap);
               connect(eMap, &EntityComponentMap::sigSendEvent, this, &VeinQml::sigSendEvent);
@@ -204,13 +204,13 @@ namespace VeinApiQml
   {
     if(m_requiredIds.contains(t_entityId))
     {
-      qCDebug(VEIN_API_QML) << "Fetched required entity:" << t_entityId;
+      vCDebug(VEIN_API_QML) << "Fetched required entity:" << t_entityId;
       m_requiredIds.removeAll(t_entityId);
       if(m_state != ConnectionState::VQ_LOADED)
       {
         if(m_requiredIds.isEmpty())
         {
-          qCDebug(VEIN_API_QML) << "All required entities resolved";
+          vCDebug(VEIN_API_QML) << "All required entities resolved";
           m_state = ConnectionState::VQ_LOADED;
           emit sigStateChanged(m_state);
         }
