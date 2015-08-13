@@ -57,7 +57,7 @@ namespace VeinApiQml
      */
     void setState(DataState t_dataState);
 
-    int entityId() const;
+    Q_INVOKABLE int entityId() const;
 
   signals:
     void sigSendEvent(QEvent *t_cEvent);
@@ -69,7 +69,7 @@ namespace VeinApiQml
   protected:
     /**
      * @brief Intercepts all value changes coming from the qml side and converts them into CommandEvents
-     * @return returns the current value (not the changed one) which will not trigger a valueChanged
+     * @return returns the current value (not the changed one) which will not trigger a valueChanged until the change notification arrives
      */
     QVariant updateValue(const QString &t_key, const QVariant &t_newValue) override;
 
