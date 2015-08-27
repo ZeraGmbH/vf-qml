@@ -79,9 +79,24 @@ namespace VeinApiQml
      */
     void loadEntityData();
 
+    /**
+     * @brief Required component data to enter the ECM_READY state
+     */
     QList<QString> m_pendingValues;
+
+    /**
+     * @brief QJson representation of the entity layout
+     */
     QJsonObject m_entityIntrospection;
+
+    /**
+     * @brief intern state
+     */
     DataState m_state = DataState::ECM_PENDING;
+
+    /**
+     * @brief entity id
+     */
     int m_entityId=-1;
   };
 }

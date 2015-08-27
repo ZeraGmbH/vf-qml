@@ -25,10 +25,10 @@ namespace VeinApiQml
     explicit VeinQml(QObject *t_parent = 0);
 
     enum class ConnectionState : int {
-      VQ_IDLE = 0,
-      VQ_LOADED = 1,
-      VQ_DISCONNECTED = 2,
-      VQ_ERROR = 3
+      VQ_IDLE = 0, /**< the system has been created and is not yet ready */
+      VQ_LOADED = 1, /**< the required entities are set and their introspection data has been fetched */
+      VQ_DISCONNECTED = 2, /**< the host or the client has closed the connection */
+      VQ_ERROR = 3 /**< error state, e.g. a required entity is not available on the server */
     };
     Q_ENUMS(ConnectionState)
 
@@ -57,31 +57,52 @@ namespace VeinApiQml
 
   signals:
     void sigStateChanged(ConnectionState t_state);
+
+    /**
+     * @brief Notifies on the availability of new entities
+     * @note used by the debugger
+     * @param t_entityName
+     */
     void sigEntityAvailable(QString t_entityName);
 
   public slots:
     void connectToServer(QHostAddress t_hostAddress, quint16 t_port);
+
     /**
      * @brief retries the connection to the server
-     * @note currently unused?
+     * @note currently misused
      */
     void reconnect();
 
   private slots:
+    /**
+     * @brief checks the required entities and transits in the VQ_LOADED state when all are resolved
+     * @param t_entityId
+     */
     void onEntityLoaded(int t_entityId);
 
   private:
     int idFromEntityName(const QString &t_entityName) const;
     QString nameFromEntityId(int t_entityId) const;
 
+    /**
+     * @brief The state describes if the system is usable (e.g. in the VQ_LOADED state)
+     */
     ConnectionState m_state = ConnectionState::VQ_IDLE;
 
     QHostAddress m_lastConnection;
     int m_lastPort = -1;
 
     QHash<int, EntityComponentMap *> m_entities;
+    /**
+     * @brief Desccribes the entity ids whose introspection data is required to enter the VQ_LOADED ConnectionState
+     */
     QList<int> m_requiredIds;
 
+    /**
+     * @brief QML singleton instance
+     * @note do not delete from c++
+     */
     static VeinQml *m_staticInstance;
   };
 }
