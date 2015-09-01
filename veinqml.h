@@ -65,15 +65,6 @@ namespace VeinApiQml
      */
     void sigEntityAvailable(QString t_entityName);
 
-  public slots:
-    void connectToServer(QHostAddress t_hostAddress, quint16 t_port);
-
-    /**
-     * @brief retries the connection to the server
-     * @note currently misused
-     */
-    void reconnect();
-
   private slots:
     /**
      * @brief checks the required entities and transits in the VQ_LOADED state when all are resolved

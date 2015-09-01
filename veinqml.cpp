@@ -185,21 +185,6 @@ namespace VeinApiQml
     return retVal;
   }
 
-  void VeinQml::connectToServer(QHostAddress t_hostAddress, quint16 t_port)
-  {
-    m_lastConnection = t_hostAddress;
-    m_lastPort = t_port;
-    reconnect(); ///@todo instead send event to start connection to server
-  }
-
-  void VeinQml::reconnect()
-  {
-    if(m_lastConnection.isNull() == false && m_lastPort >0)
-    {
-      connectToServer(m_lastConnection, m_lastPort);
-    }
-  }
-
   void VeinQml::onEntityLoaded(int t_entityId)
   {
     if(m_requiredIds.contains(t_entityId))
