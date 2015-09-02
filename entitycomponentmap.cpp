@@ -93,10 +93,6 @@ namespace VeinApiQml
       {
         cData->setNewValue(t_newValue.toMap());
       }
-      else if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantList)))
-      {
-        cData->setNewValue(t_newValue.toList());
-      }
       else
       {
         cData->setNewValue(t_newValue);
