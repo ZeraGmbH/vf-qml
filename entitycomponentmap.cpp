@@ -89,7 +89,18 @@ namespace VeinApiQml
       cData->setEventOrigin(VeinComponent::ComponentData::EventOrigin::EO_LOCAL);
       cData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
       cData->setComponentName(t_key);
-      cData->setNewValue(t_newValue);
+      if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantMap)))
+      {
+        cData->setNewValue(t_newValue.toMap());
+      }
+      else if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantList)))
+      {
+        cData->setNewValue(t_newValue.toList());
+      }
+      else
+      {
+        cData->setNewValue(t_newValue);
+      }
       cData->setOldValue(retVal);
       cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, cData);
 
