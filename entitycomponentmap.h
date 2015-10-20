@@ -69,6 +69,7 @@ namespace VeinApiQml
   protected:
     /**
      * @brief Intercepts all value changes coming from the qml side and converts them into CommandEvents
+     * @note updateValue is NOT called when changes are made by calling insert() or clear() - it is only emitted when a value is updated from QML.
      * @return returns the current value (not the changed one) which will not trigger a valueChanged until the change notification arrives
      */
     QVariant updateValue(const QString &t_key, const QVariant &t_newValue) override;

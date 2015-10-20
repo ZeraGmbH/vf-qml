@@ -27,11 +27,13 @@ namespace VeinApiQml
       case VeinComponent::ComponentData::Command::CCMD_SET:
       {
         vCDebug(VEIN_API_QML_VERBOSE) << "Updated value" << t_cData->componentName() << t_cData->newValue();
-        insert(t_cData->componentName(), t_cData->newValue());
+        insert(t_cData->componentName(), t_cData->newValue()); // bypasses the function updateValue(...)
         break;
       }
       case VeinComponent::ComponentData::Command::CCMD_REMOVE:
       {
+        /// @note It is not possible to remove keys from the map; once a key has been added, you can only modify or clear its associated value.
+        /// @note Keys that have been cleared will still appear in this list, even though their associated values are invalid
         clear(t_cData->componentName());
         break;
       }
@@ -40,7 +42,7 @@ namespace VeinApiQml
         if(m_pendingValues.contains(t_cData->componentName()))
         {
           vCDebug(VEIN_API_QML_VERBOSE) << "Fetched value" << t_cData->componentName() << t_cData->newValue();
-          insert(t_cData->componentName(), t_cData->newValue());
+          insert(t_cData->componentName(), t_cData->newValue()); // bypasses the function updateValue(...)
           m_pendingValues.removeAll(t_cData->componentName());
           if(m_pendingValues.isEmpty())
           {
@@ -115,7 +117,7 @@ namespace VeinApiQml
     m_pendingValues.append(tmpKeys);
     foreach(QString tmpKey, tmpKeys)
     {
-      insert(tmpKey, QVariant());
+      insert(tmpKey, QVariant()); // bypasses the function updateValue(...)
 
       cData = new VeinComponent::ComponentData();
       cData->setEntityId(m_entityId);

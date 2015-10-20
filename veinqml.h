@@ -73,6 +73,12 @@ namespace VeinApiQml
     void onEntityLoaded(int t_entityId);
 
   private:
+    /**
+     * @brief Searches the list of entities for the given name
+     * @param t_entityName
+     * @return
+     * @todo a cross reference hash resolving the names to the id should yield more performance with large sets of entities
+     */
     int idFromEntityName(const QString &t_entityName) const;
     QString nameFromEntityId(int t_entityId) const;
 

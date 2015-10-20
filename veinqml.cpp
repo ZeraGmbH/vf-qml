@@ -133,6 +133,7 @@ namespace VeinApiQml
                 if(m_entities.contains(entityId))
                 {
                   /// @note do not delete the value here, as QML is still referencing it, instead mark it as removed
+                  /// @todo with c++11 a shared pointer could be used to automagically track the value
                   EntityComponentMap *eMap = m_entities.value(entityId);
                   eMap->setState(EntityComponentMap::DataState::ECM_REMOVED);
                   m_entities.remove(entityId);
