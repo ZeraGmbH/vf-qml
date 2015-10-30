@@ -27,10 +27,6 @@ namespace VeinApiQml
     EntityComponentMap() = delete;
 
   public:
-    /**
-     * @brief EntityComponentMap
-     * @param entityIntrospection [in] expects introspection with preinitialized values
-     */
     explicit EntityComponentMap(int t_entityId, const QJsonObject &t_entityIntrospection, QObject *t_parent=0);
 
     enum class DataState : int {

@@ -17,6 +17,9 @@ namespace VeinApiQml
 {
   class EntityComponentMap;
 
+  /**
+   * @brief QML binding to interoperate with entity/component data via VeinApiQml::EntityComponentMap
+   */
   class QMLVEINENTITYSHARED_EXPORT VeinQml : public VeinEvent::EventSystem
   {
     Q_OBJECT
@@ -51,7 +54,7 @@ namespace VeinApiQml
     // EventSystem interface
   public:
     /**
-     * @todo set up a queue for sent transaction events and compare against notifications / errors
+     * @todo set up a queue for sent transactional VeinEvent::CommandEvent and compare against notifications / errors
      */
     bool processEvent(QEvent *t_event) override;
 
@@ -91,6 +94,7 @@ namespace VeinApiQml
      * @brief entity id based lookup table for getEntity()
      */
     QHash<int, EntityComponentMap *> m_entities;
+
     /**
      * @brief Desccribes the entity ids whose introspection data is required to enter the VQ_LOADED ConnectionState
      */

@@ -6,8 +6,14 @@
 class QQmlEngine;
 class QJSEngine;
 
+/**
+ * @brief QML Bindings for VeinComponent, VeinEvent and VeinNet
+ */
 namespace VeinApiQml {
 
+  /**
+   * @brief Registers the types VeinApiQml::VeinQml and VeinApiQml::EntityComponentMap with the QML engine
+   */
   class QmlWrapper
   {
   public:

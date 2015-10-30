@@ -113,7 +113,7 @@ namespace VeinApiQml
             cData = static_cast<ComponentData *>(cEvent->eventData());
             retVal = true;
 
-            if(m_entities.contains(cData->entityId())) ///< @note component data is only processed after the introspection has been processed
+            if(m_entities.contains(cData->entityId())) /// @note component data is only processed after the introspection has been processed
             {
               m_entities.value(cData->entityId())->processComponentData(cData);
             }
@@ -152,7 +152,7 @@ namespace VeinApiQml
             }
             break;
           }
-          case ErrorData::dataType(): ///< @todo add message queue and check if the error belongs to actions taken from this client
+          case ErrorData::dataType(): /// @todo add message queue and check if the error belongs to actions taken from this client
           {
             ErrorData *errData=0;
             errData = static_cast<ErrorData *>(cEvent->eventData());
@@ -213,7 +213,7 @@ namespace VeinApiQml
       foreach(int tmpKey, m_entities.keys())
       {
         EntityComponentMap *eMap = m_entities.value(tmpKey);
-        if(eMap->value("EntityName") == t_entityName) ///< @todo remove hardcoded
+        if(eMap->value("EntityName") == t_entityName) /// @todo remove hardcoded
         {
           retVal = tmpKey;
           break;
@@ -228,7 +228,7 @@ namespace VeinApiQml
     QString retVal;
     if(m_entities.contains(t_entityId))
     {
-      retVal = m_entities.value(t_entityId)->value("EntityName").value<QString>(); ///< @todo remove hardcoded
+      retVal = m_entities.value(t_entityId)->value("EntityName").value<QString>(); /// @todo remove hardcoded
     }
     return retVal;
   }
