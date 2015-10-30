@@ -87,9 +87,9 @@ namespace VeinApiQml
      */
     ConnectionState m_state = ConnectionState::VQ_IDLE;
 
-    QHostAddress m_lastConnection;
-    int m_lastPort = -1;
-
+    /**
+     * @brief entity id based lookup table for getEntity()
+     */
     QHash<int, EntityComponentMap *> m_entities;
     /**
      * @brief Desccribes the entity ids whose introspection data is required to enter the VQ_LOADED ConnectionState
