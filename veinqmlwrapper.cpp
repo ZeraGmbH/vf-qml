@@ -1,7 +1,6 @@
 #include "veinqmlwrapper.h"
 
 #include <qqml.h>
-#include <QJSEngine>
 
 #include <veinqml.h>
 #include <entitycomponentmap.h>
