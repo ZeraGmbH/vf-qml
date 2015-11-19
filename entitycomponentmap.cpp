@@ -91,7 +91,7 @@ namespace VeinApiQml
       cData->setEventOrigin(VeinComponent::ComponentData::EventOrigin::EO_LOCAL);
       cData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
       cData->setComponentName(t_key);
-      if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantMap)))
+      if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantMap))) /// @todo add conversion for lists?
       {
         cData->setNewValue(t_newValue.toMap());
       }
