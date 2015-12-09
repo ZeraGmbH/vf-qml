@@ -24,6 +24,11 @@ namespace VeinApiQml
 
   }
 
+  VeinQml::~VeinQml()
+  {
+
+  }
+
   VeinQml::ConnectionState VeinQml::state() const
   {
     return m_state;
@@ -191,6 +196,9 @@ namespace VeinApiQml
     if(m_requiredIds.contains(t_entityId))
     {
       vCDebug(VEIN_API_QML) << "Fetched required entity:" << t_entityId;
+
+      /// @todo PRIO check ecm_ready use
+      //m_entities.value(t_entityId)->setState(EntityComponentMap::DataState::ECM_READY);
       m_requiredIds.removeAll(t_entityId);
       if(m_state != ConnectionState::VQ_LOADED)
       {

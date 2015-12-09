@@ -25,7 +25,14 @@ namespace VeinApiQml
     Q_OBJECT
 
   public:
+    /**
+     * @brief VeinQml
+     * @param t_parent
+     *
+     * @note if used with the QML engine (e.g. qmlRegisterSingletonType<VeinQml>...) then the instance is owned by QML and will also be deleted by the QML engine
+     */
     explicit VeinQml(QObject *t_parent = 0);
+    ~VeinQml();
 
     enum class ConnectionState : int {
       VQ_IDLE = 0, /**< the system has been created and is not yet ready */
