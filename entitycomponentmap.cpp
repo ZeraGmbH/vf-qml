@@ -78,6 +78,11 @@ namespace VeinApiQml
     return m_entityId;
   }
 
+  bool EntityComponentMap::hasComponent(const QString &t_componentName)
+  {
+    return contains(t_componentName);
+  }
+
   QVariant EntityComponentMap::updateValue(const QString &t_key, const QVariant &t_newValue)
   {
     QVariant retVal = value(t_key);

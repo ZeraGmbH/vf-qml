@@ -52,6 +52,7 @@ namespace VeinApiQml
     /**
      * @brief Required by qmlRegisterSingletonType
      * @return
+     * @todo Replace with host specific instances that are created on the fly for each ip address connected to (like getInstanceForHost('192.168.123.123'))
      */
     static VeinQml *getStaticInstance();
     static void setStaticInstance(VeinQml *t_instance);
@@ -88,6 +89,7 @@ namespace VeinApiQml
      * @param t_entityName
      * @return
      * @todo a cross reference hash resolving the names to the id should yield more performance with large sets of entities
+     * @todo test time memory tradeoff
      */
     int idFromEntityName(const QString &t_entityName) const;
     QString nameFromEntityId(int t_entityId) const;
@@ -103,7 +105,7 @@ namespace VeinApiQml
     QHash<int, EntityComponentMap *> m_entities;
 
     /**
-     * @brief Desccribes the entity ids whose introspection data is required to enter the VQ_LOADED ConnectionState
+     * @brief Describes the entity ids whose introspection data is required to enter the VQ_LOADED ConnectionState
      */
     QList<int> m_requiredIds;
 

@@ -37,7 +37,7 @@ namespace VeinApiQml
   EntityComponentMap *VeinQml::getEntity(const QString &t_entityName) const
   {
     EntityComponentMap *retVal = 0;
-    int entityId = idFromEntityName(t_entityName);
+    int entityId = idFromEntityName(t_entityName); /// @todo this is a performance bottleneck
 
     if(entityId>=0 && m_entities.contains(entityId))
     {
