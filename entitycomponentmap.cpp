@@ -88,7 +88,7 @@ namespace VeinApiQml
     QVariant retVal = value(t_key);
     if(Q_UNLIKELY(t_newValue.isValid() == false))
     {
-      qDebug() << QString("Invalid value for entity: %1 component: %2 value: ").arg(m_entityId).arg(t_key) << t_newValue;
+      vCDebug(VEIN_API_QML) << QString("Invalid value for entity: %1 component: %2 value: ").arg(m_entityId).arg(t_key) << t_newValue;
       VF_ASSERT(t_newValue.isValid(), "Invalid value set from QML");
     }
     else
