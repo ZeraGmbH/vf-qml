@@ -103,19 +103,24 @@ namespace VeinApiQml
     if(t_event->type()==CommandEvent::eventType())
     {
       CommandEvent *cEvent = 0;
+      EventData *evData = 0;
       cEvent = static_cast<CommandEvent *>(t_event);
+      Q_ASSERT(cEvent != 0);
 
-      if(cEvent != 0 && cEvent->eventSubtype() == CommandEvent::EventSubtype::NOTIFICATION)
+      evData = cEvent->eventData();
+      Q_ASSERT(evData != 0);
+
+      if(cEvent->eventSubtype() == CommandEvent::EventSubtype::NOTIFICATION)
       {
-        vCDebug(VEIN_API_QML_VERBOSE) << "Processing command event:" << cEvent << cEvent->eventData()->type();
+        vCDebug(VEIN_API_QML_VERBOSE) << "Processing command event:" << cEvent << evData->type();
 
         /// @todo add support for network events (connected / disconnected / error)
-        switch (cEvent->eventData()->type())
+        switch (evData->type())
         {
           case ComponentData::dataType():
           {
             ComponentData *cData=0;
-            cData = static_cast<ComponentData *>(cEvent->eventData());
+            cData = static_cast<ComponentData *>(evData);
             retVal = true;
 
             if(m_entities.contains(cData->entityId())) /// @note component data is only processed after the introspection has been processed
@@ -127,7 +132,7 @@ namespace VeinApiQml
           case EntityData::dataType():
           {
             EntityData *eData=0;
-            eData = static_cast<EntityData *>(cEvent->eventData());
+            eData = static_cast<EntityData *>(evData);
             retVal = true;
             int entityId =eData->entityId();
 
@@ -160,14 +165,14 @@ namespace VeinApiQml
           case ErrorData::dataType(): /// @todo add message queue and check if the error belongs to actions taken from this client
           {
             ErrorData *errData=0;
-            errData = static_cast<ErrorData *>(cEvent->eventData());
+            errData = static_cast<ErrorData *>(evData);
             qCWarning(VEIN_API_QML_INTROSPECTION) << "Received error:" <<errData->errorDescription();
             break;
           }
           case IntrospectionData::dataType():
           {
             IntrospectionData *iData=0;
-            iData = static_cast<IntrospectionData *>(cEvent->eventData());
+            iData = static_cast<IntrospectionData *>(evData);
             retVal = true;
             int entityId = iData->entityId();
             vCDebug(VEIN_API_QML) << "Received introspection data for entity:" << entityId;
