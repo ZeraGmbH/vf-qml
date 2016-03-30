@@ -63,8 +63,6 @@ namespace VeinApiQml
     return retVal;
   }
 
-
-
   VeinQml *VeinQml::getStaticInstance()
   {
     return m_staticInstance;
@@ -80,9 +78,33 @@ namespace VeinApiQml
 
   void VeinQml::setRequiredIds(QList<int> t_requiredEntityIds)
   {
-    m_requiredIds = t_requiredEntityIds; /// @todo maybe only append the new ids? send unsubscribe events for removed ids... etc.
-    vCDebug(VEIN_API_QML) << "Set required ids to:" << t_requiredEntityIds;
-    foreach(int newId, m_requiredIds) /// @todo currently it's possible to send subscription events for entities already subscribed to
+    vCDebug(VEIN_API_QML) << "Set required ids from:" << m_requiredIds << "to:" << t_requiredEntityIds;
+
+    QSet<int> toRemove = QSet<int>::fromList(m_requiredIds);
+    QSet<int> toAdd = QSet<int>::fromList(t_requiredEntityIds);
+
+    toRemove.subtract(toAdd);
+    foreach (int removedId, toRemove) {
+      m_resolvedIds.removeAll(removedId);
+      EntityComponentMap *toDelete = m_entities.value(removedId);
+      m_entities.remove(removedId);
+      delete toDelete;
+      EntityData *eData = new EntityData();
+      eData->setCommand(EntityData::Command::ECMD_UNSUBSCRIBE);
+      eData->setEntityId(removedId);
+      eData->setEventOrigin(EntityData::EventOrigin::EO_LOCAL);
+      eData->setEventTarget(EntityData::EventTarget::ET_ALL);
+
+      CommandEvent *cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, eData);
+
+      vCDebug(VEIN_API_QML) << "Removing now obsolete subscription to entityId:" << removedId;
+
+      emit sigSendEvent(cEvent);
+    }
+
+    toAdd.subtract(QSet<int>::fromList(m_requiredIds));
+
+    foreach(int newId, toAdd) /// @todo currently it's possible to send subscription events for entities already subscribed to
     {
       EntityData *eData = new EntityData();
       eData->setCommand(EntityData::Command::ECMD_SUBSCRIBE);
@@ -94,6 +116,7 @@ namespace VeinApiQml
 
       emit sigSendEvent(cEvent);
     }
+    m_requiredIds = t_requiredEntityIds;
   }
 
   bool VeinQml::processEvent(QEvent *t_event)
@@ -142,14 +165,15 @@ namespace VeinApiQml
               {
                 if(m_entities.contains(entityId))
                 {
-                  /// @note do not delete the value here, as QML is still referencing it, instead mark it as removed
-                  /// @todo with c++11 a shared pointer could be used to automagically track the value
                   EntityComponentMap *eMap = m_entities.value(entityId);
                   eMap->setState(EntityComponentMap::DataState::ECM_REMOVED);
+
                   m_entities.remove(entityId);
+                  delete eMap;
 
                   if(m_requiredIds.contains(entityId))
                   {
+                    m_resolvedIds.removeAll(entityId);
                     qCCritical(VEIN_API_QML_INTROSPECTION) << "Required entity was removed remotely, entity id:" << entityId;
                     m_state = ConnectionState::VQ_ERROR;
                     emit sigStateChanged(m_state);
@@ -204,10 +228,13 @@ namespace VeinApiQml
 
       /// @todo PRIO check ecm_ready use
       //m_entities.value(t_entityId)->setState(EntityComponentMap::DataState::ECM_READY);
-      m_requiredIds.removeAll(t_entityId);
+      m_resolvedIds.append(t_entityId);
+      //m_requiredIds.removeAll(t_entityId);
       if(m_state != ConnectionState::VQ_LOADED)
       {
-        if(m_requiredIds.isEmpty())
+        qSort(m_requiredIds);
+        qSort(m_resolvedIds);
+        if(m_requiredIds == m_resolvedIds)
         {
           vCDebug(VEIN_API_QML) << "All required entities resolved";
           m_state = ConnectionState::VQ_LOADED;
@@ -226,7 +253,7 @@ namespace VeinApiQml
       foreach(int tmpKey, m_entities.keys())
       {
         EntityComponentMap *eMap = m_entities.value(tmpKey);
-        if(eMap->value("EntityName") == t_entityName) /// @todo remove hardcoded
+        if(eMap->value("EntityName") == t_entityName) /// @todo replace with cross reference list
         {
           retVal = tmpKey;
           break;
@@ -241,7 +268,7 @@ namespace VeinApiQml
     QString retVal;
     if(m_entities.contains(t_entityId))
     {
-      retVal = m_entities.value(t_entityId)->value("EntityName").value<QString>(); /// @todo remove hardcoded
+      retVal = m_entities.value(t_entityId)->value("EntityName").value<QString>(); /// @todo replace with cross reference list
     }
     return retVal;
   }

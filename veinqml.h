@@ -110,6 +110,11 @@ namespace VeinApiQml
     QList<int> m_requiredIds;
 
     /**
+     * @brief Describes the resolved ids of the required list
+     */
+    QList<int> m_resolvedIds;
+
+    /**
      * @brief QML singleton instance
      * @note do not delete from c++
      */
