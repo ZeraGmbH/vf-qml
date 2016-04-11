@@ -54,6 +54,7 @@ namespace VeinApiQml
     void setState(DataState t_dataState);
 
     Q_INVOKABLE int entityId() const;
+    //alias for QQmlPropertyMap::contains
     Q_INVOKABLE bool hasComponent(const QString& t_componentName);
 
   signals:

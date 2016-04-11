@@ -53,14 +53,9 @@ namespace VeinApiQml
 
   bool VeinQml::hasEntity(const QString &t_entityName) const
   {
-    bool retVal = false;
-    int entityId = idFromEntityName(t_entityName);
+    const int entityId = idFromEntityName(t_entityName);
 
-    if(entityId>=0 && m_entities.contains(entityId))
-    {
-      retVal = true;
-    }
-    return retVal;
+    return entityId>=0 && m_entities.contains(entityId);
   }
 
   VeinQml *VeinQml::getStaticInstance()
