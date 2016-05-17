@@ -95,14 +95,16 @@ namespace VeinApiQml
     {
       if(retVal != t_newValue)
       {
-        CommandEvent *cEvent = 0;
         ComponentData *cData = 0;
+        CommandEvent *cEvent = 0;
+
         cData = new VeinComponent::ComponentData();
         cData->setEntityId(m_entityId);
         cData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
         cData->setEventOrigin(VeinComponent::ComponentData::EventOrigin::EO_LOCAL);
         cData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
         cData->setComponentName(t_key);
+
         if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantList) && t_newValue.toList().isEmpty() == false))
         {
           cData->setNewValue(t_newValue.toList());
@@ -115,6 +117,7 @@ namespace VeinApiQml
         {
           cData->setNewValue(t_newValue);
         }
+
         cData->setOldValue(retVal);
         cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, cData);
 

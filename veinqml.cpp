@@ -217,6 +217,8 @@ namespace VeinApiQml
 
   void VeinQml::onEntityLoaded(int t_entityId)
   {
+    m_state = ConnectionState::VQ_IDLE;
+    emit sigStateChanged(m_state);
     if(m_requiredIds.contains(t_entityId))
     {
       vCDebug(VEIN_API_QML) << "Fetched required entity:" << t_entityId;
