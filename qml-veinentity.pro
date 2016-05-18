@@ -17,6 +17,8 @@ HEADERS +=\
     veinqml.h \
     veinqmlwrapper.h
 
+public_headers.files = $$HEADERS
+
 exists( ../../vein-framework.pri ) {
   include(../../vein-framework.pri)
 }
