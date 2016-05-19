@@ -83,6 +83,11 @@ namespace VeinApiQml
     return contains(t_componentName);
   }
 
+  int EntityComponentMap::propertyCount()
+  {
+    return count();
+  }
+
   QVariant EntityComponentMap::updateValue(const QString &t_key, const QVariant &t_newValue)
   {
     QVariant retVal = value(t_key);
