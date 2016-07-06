@@ -151,7 +151,7 @@ namespace VeinApiQml
       cData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
       cData->setComponentName(tmpKey);
       cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, cData);
-      vCDebug(VEIN_API_QML_INTROSPECTION) << "Fetching entity data for entityId:" << m_entityId << "component:" << tmpKey << "event:" << cEvent;
+      vCDebug(VEIN_API_QML_VERBOSE) << "Fetching entity data for entityId:" << m_entityId << "component:" << tmpKey << "event:" << cEvent;
 
       emit sigSendEvent(cEvent);
     }
