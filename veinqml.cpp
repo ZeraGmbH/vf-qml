@@ -74,16 +74,16 @@ namespace VeinApiQml
   void VeinQml::setRequiredIds(QList<int> t_requiredEntityIds)
   {
     vCDebug(VEIN_API_QML) << "Set required ids from:" << m_requiredIds << "to:" << t_requiredEntityIds;
-
+    m_state = ConnectionState::VQ_IDLE;
+    sigStateChanged(m_state);
     QSet<int> toRemove = QSet<int>::fromList(m_requiredIds);
     QSet<int> toAdd = QSet<int>::fromList(t_requiredEntityIds);
 
-    toRemove.subtract(toAdd);
     foreach (int removedId, toRemove) {
       m_resolvedIds.removeAll(removedId);
       EntityComponentMap *toDelete = m_entities.value(removedId);
       m_entities.remove(removedId);
-      delete toDelete;
+      toDelete->deleteLater();
       EntityData *eData = new EntityData();
       eData->setCommand(EntityData::Command::ECMD_UNSUBSCRIBE);
       eData->setEntityId(removedId);
@@ -96,8 +96,6 @@ namespace VeinApiQml
 
       emit sigSendEvent(cEvent);
     }
-
-    toAdd.subtract(QSet<int>::fromList(m_requiredIds));
 
     foreach(int newId, toAdd) /// @todo currently it's possible to send subscription events for entities already subscribed to
     {
@@ -139,6 +137,7 @@ namespace VeinApiQml
           {
             ComponentData *cData=0;
             cData = static_cast<ComponentData *>(evData);
+            Q_ASSERT(cData != nullptr);
             retVal = true;
 
             if(m_entities.contains(cData->entityId())) /// @note component data is only processed after the introspection has been processed
