@@ -24,7 +24,7 @@ namespace VeinApiQml {
   {
     // @uri Vein
     using namespace VeinApiQml;
-    qmlRegisterSingletonType<VeinQml>("VeinEntity", 1, 0, "VeinEntity", getSingletonInstance);
+    qmlRegisterSingletonType<VeinQml>("VeinEntity", 1, 0, "VeinEntity", QmlWrapper::getSingletonInstance);
     qmlRegisterInterface<EntityComponentMap>("EntityComponentMap");//, 1, 0, "VeinEntityMap", QString("VeinEntityMap is not creatable"));
   }
 } // namespace VeinApiQml

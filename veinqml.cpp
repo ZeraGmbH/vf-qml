@@ -97,7 +97,7 @@ namespace VeinApiQml
       emit sigSendEvent(cEvent);
     }
 
-    foreach(int newId, toAdd) /// @todo currently it's possible to send subscription events for entities already subscribed to
+    foreach(int newId, toAdd) /// @bug currently it's possible to send subscription events for entities already subscribed to
     {
       EntityData *eData = new EntityData();
       eData->setCommand(EntityData::Command::ECMD_SUBSCRIBE);
@@ -225,7 +225,7 @@ namespace VeinApiQml
       /// @todo PRIO check ecm_ready use
       //m_entities.value(t_entityId)->setState(EntityComponentMap::DataState::ECM_READY);
       m_resolvedIds.append(t_entityId);
-      //m_requiredIds.removeAll(t_entityId);
+      emit sigEntityAvailable(nameFromEntityId(t_entityId)); // needs to be called before sigStateChanged(), or the list of entities may be already deleted from a setRequiredIds() call
       if(m_state != ConnectionState::VQ_LOADED)
       {
         qSort(m_requiredIds);
@@ -237,7 +237,6 @@ namespace VeinApiQml
           emit sigStateChanged(m_state);
         }
       }
-      emit sigEntityAvailable(nameFromEntityId(t_entityId));
     }
   }
 
