@@ -58,6 +58,11 @@ namespace VeinApiQml
     return entityId>=0 && m_entities.contains(entityId);
   }
 
+  EntityComponentMap *VeinQml::getEntityById(int t_id) const
+  {
+    return m_entities.value(t_id, 0);
+  }
+
   VeinQml *VeinQml::getStaticInstance()
   {
     return m_staticInstance;

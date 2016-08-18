@@ -97,7 +97,7 @@ namespace VeinApiQml
     /**
      * @brief entity id
      */
-    int m_entityId=-1;
+    const int m_entityId;
   };
 }
 #endif // ENTITYCOMPONENTMAP_H
