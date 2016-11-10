@@ -120,7 +120,7 @@ namespace VeinApiQml
      * @brief QML singleton instance
      * @note do not delete from c++
      */
-    static VeinQml *m_staticInstance;
+    static VeinQml *s_staticInstance;
   };
 }
 #endif // VEINQML_H

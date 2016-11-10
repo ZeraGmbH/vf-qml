@@ -65,14 +65,14 @@ namespace VeinApiQml
 
   VeinQml *VeinQml::getStaticInstance()
   {
-    return m_staticInstance;
+    return s_staticInstance;
   }
 
   void VeinQml::setStaticInstance(VeinQml *t_instance)
   {
     if(t_instance)
     {
-      m_staticInstance = t_instance;
+      s_staticInstance = t_instance;
     }
   }
 
@@ -274,5 +274,5 @@ namespace VeinApiQml
   }
 
 
-  VeinQml *VeinQml::m_staticInstance = 0;
+  VeinQml *VeinQml::s_staticInstance = 0;
 }
