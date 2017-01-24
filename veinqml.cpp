@@ -37,7 +37,7 @@ namespace VeinApiQml
   EntityComponentMap *VeinQml::getEntity(const QString &t_entityName) const
   {
     EntityComponentMap *retVal = 0;
-    int entityId = idFromEntityName(t_entityName); /// @todo this is a performance bottleneck
+    const int entityId = idFromEntityName(t_entityName); /// @todo this is a performance bottleneck
 
     if(entityId>=0 && m_entities.contains(entityId))
     {
@@ -81,8 +81,8 @@ namespace VeinApiQml
     vCDebug(VEIN_API_QML) << "Set required ids from:" << m_requiredIds << "to:" << t_requiredEntityIds;
     m_state = ConnectionState::VQ_IDLE;
     sigStateChanged(m_state);
-    QSet<int> toRemove = QSet<int>::fromList(m_requiredIds);
-    QSet<int> toAdd = QSet<int>::fromList(t_requiredEntityIds);
+    const QSet<int> toRemove = QSet<int>::fromList(m_requiredIds);
+    const QSet<int> toAdd = QSet<int>::fromList(t_requiredEntityIds);
 
     foreach (int removedId, toRemove) {
       m_resolvedIds.removeAll(removedId);

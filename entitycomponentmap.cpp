@@ -90,7 +90,7 @@ namespace VeinApiQml
 
   QVariant EntityComponentMap::updateValue(const QString &t_key, const QVariant &t_newValue)
   {
-    QVariant retVal = value(t_key);
+    const QVariant retVal = value(t_key);
     if(Q_UNLIKELY(t_newValue.isValid() == false))
     {
       vCDebug(VEIN_API_QML) << QString("Invalid value for entity: %1 component: %2 value: ").arg(m_entityId).arg(t_key) << t_newValue;
@@ -137,8 +137,8 @@ namespace VeinApiQml
     CommandEvent *cEvent = 0;
     ComponentData *cData = 0;
 
-    QVariantMap tmpValues = m_entityIntrospection.toVariantMap();
-    QList<QString> tmpKeys = tmpValues.value(QString("components")).toStringList();
+    const QVariantMap tmpValues = m_entityIntrospection.toVariantMap();
+    const QList<QString> tmpKeys = tmpValues.value(QString("components")).toStringList();
     m_pendingValues.append(tmpKeys);
     foreach(QString tmpKey, tmpKeys)
     {
