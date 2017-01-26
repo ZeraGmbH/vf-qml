@@ -84,7 +84,7 @@ namespace VeinApiQml
     const QSet<int> toRemove = QSet<int>::fromList(m_requiredIds);
     const QSet<int> toAdd = QSet<int>::fromList(t_requiredEntityIds);
 
-    foreach (int removedId, toRemove) {
+    for(const int removedId : toRemove) {
       m_resolvedIds.removeAll(removedId);
       EntityComponentMap *toDelete = m_entities.value(removedId);
       m_entities.remove(removedId);
@@ -102,7 +102,7 @@ namespace VeinApiQml
       emit sigSendEvent(cEvent);
     }
 
-    foreach(int newId, toAdd) /// @bug currently it's possible to send subscription events for entities already subscribed to
+    for(const int newId : toAdd) /// @bug currently it's possible to send subscription events for entities already subscribed to
     {
       EntityData *eData = new EntityData();
       eData->setCommand(EntityData::Command::ECMD_SUBSCRIBE);
@@ -233,8 +233,8 @@ namespace VeinApiQml
       emit sigEntityAvailable(nameFromEntityId(t_entityId)); // needs to be called before sigStateChanged(), or the list of entities may be already deleted from a setRequiredIds() call
       if(m_state != ConnectionState::VQ_LOADED)
       {
-        qSort(m_requiredIds);
-        qSort(m_resolvedIds);
+        std::sort(m_requiredIds.begin(), m_requiredIds.end());
+        std::sort(m_resolvedIds.begin(), m_resolvedIds.end());
         if(m_requiredIds == m_resolvedIds)
         {
           vCDebug(VEIN_API_QML) << "All required entities resolved";
@@ -250,7 +250,8 @@ namespace VeinApiQml
     int retVal = -1;
     if(t_entityName.isEmpty() == false)
     {
-      foreach(int tmpKey, m_entities.keys())
+      const auto tmpEntityIdKeys = m_entities.keys();
+      for(const int tmpKey : tmpEntityIdKeys)
       {
         EntityComponentMap *eMap = m_entities.value(tmpKey);
         if(eMap->value("EntityName") == t_entityName) /// @todo replace with cross reference list

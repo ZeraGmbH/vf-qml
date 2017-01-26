@@ -140,7 +140,7 @@ namespace VeinApiQml
     const QVariantMap tmpValues = m_entityIntrospection.toVariantMap();
     const QList<QString> tmpKeys = tmpValues.value(QString("components")).toStringList();
     m_pendingValues.append(tmpKeys);
-    foreach(QString tmpKey, tmpKeys)
+    for(const QString &tmpKey : tmpKeys)
     {
       insert(tmpKey, QVariant()); // bypasses the function updateValue(...)
 
