@@ -55,8 +55,8 @@ namespace VeinApiQml
 
     Q_INVOKABLE int entityId() const;
     //alias for QQmlPropertyMap::contains
-    Q_INVOKABLE bool hasComponent(const QString &t_componentName);
-    Q_INVOKABLE int propertyCount();
+    Q_INVOKABLE bool hasComponent(const QString &t_componentName) const;
+    Q_INVOKABLE int propertyCount() const;
 
   signals:
     void sigSendEvent(QEvent *t_cEvent);

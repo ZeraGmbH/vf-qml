@@ -78,12 +78,12 @@ namespace VeinApiQml
     return m_entityId;
   }
 
-  bool EntityComponentMap::hasComponent(const QString &t_componentName)
+  bool EntityComponentMap::hasComponent(const QString &t_componentName) const
   {
     return contains(t_componentName);
   }
 
-  int EntityComponentMap::propertyCount()
+  int EntityComponentMap::propertyCount() const
   {
     return count();
   }
