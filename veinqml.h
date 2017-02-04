@@ -51,6 +51,8 @@ namespace VeinApiQml
 
     Q_INVOKABLE EntityComponentMap *getEntityById(int t_id) const;
 
+    Q_INVOKABLE QList<int> getEntityList() const;
+
     /**
      * @brief Required by qmlRegisterSingletonType
      * @return

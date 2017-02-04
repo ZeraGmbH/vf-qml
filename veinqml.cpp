@@ -63,6 +63,11 @@ namespace VeinApiQml
     return m_entities.value(t_id, 0);
   }
 
+  QList<int> VeinQml::getEntityList() const
+  {
+    return m_entities.keys();
+  }
+
   VeinQml *VeinQml::getStaticInstance()
   {
     return s_staticInstance;
