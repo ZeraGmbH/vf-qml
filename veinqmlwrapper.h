@@ -21,7 +21,6 @@ namespace VeinApiQml {
   public:
     QmlWrapper();
     static QObject *getSingletonInstance(QQmlEngine *t_engine, QJSEngine *t_scriptEngine);
-    static void registerTypes();
   };
 
 } // namespace VeinApiQml
