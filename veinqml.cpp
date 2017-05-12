@@ -138,8 +138,6 @@ namespace VeinApiQml
 
       if(cEvent->eventSubtype() == CommandEvent::EventSubtype::NOTIFICATION)
       {
-        vCDebug(VEIN_API_QML_VERBOSE) << "Processing command event:" << cEvent << evData->type();
-
         /// @todo add support for network events (connected / disconnected / error)
         switch (evData->type())
         {
@@ -203,11 +201,10 @@ namespace VeinApiQml
             iData = static_cast<IntrospectionData *>(evData);
             retVal = true;
             int entityId = iData->entityId();
-            vCDebug(VEIN_API_QML) << "Received introspection data for entity:" << entityId;
+            vCDebug(VEIN_API_QML_VERBOSE) << "Received introspection data for entity:" << entityId;
 
             if(m_entities.contains(entityId) == false)
             {
-              vCDebug(VEIN_API_QML) << "added introspection for entity:" << entityId;
               EntityComponentMap *eMap = new EntityComponentMap(entityId, iData->jsonData(), this);
               m_entities.insert(entityId, eMap);
               connect(eMap, &EntityComponentMap::sigSendEvent, this, &VeinQml::sigSendEvent);
