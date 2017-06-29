@@ -5,7 +5,6 @@
 
 #include <ve_eventsystem.h>
 
-#include <QHostAddress>
 #include <QHash>
 #include <QJsonObject>
 

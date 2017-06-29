@@ -4,7 +4,6 @@
 #
 #-------------------------------------------------
 
-TEMPLATE = lib
 
 #dependencies
 VEIN_DEP_EVENT = 1
@@ -17,11 +16,9 @@ HEADERS +=\
     veinqml.h \
     veinqmlwrapper.h
 
+TEMPLATE = lib
 public_headers.files = $$HEADERS
 
-exists( ../../vein-framework.pri ) {
-  include(../../vein-framework.pri)
-}
 
 
 QT       += qml quick network
@@ -40,4 +37,8 @@ SOURCES += \
 unix {
     target.path = /usr/lib
     INSTALLS += target
+}
+
+exists( ../../vein-framework.pri ) {
+  include(../../vein-framework.pri)
 }
