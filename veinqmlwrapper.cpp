@@ -6,7 +6,8 @@
 #include <veinqml.h>
 #include <entitycomponentmap.h>
 
-namespace VeinApiQml {
+namespace VeinApiQml
+{
 
   QmlWrapper::QmlWrapper()
   {
