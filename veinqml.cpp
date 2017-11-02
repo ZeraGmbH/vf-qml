@@ -9,6 +9,7 @@
 #include <vcmp_entitydata.h>
 #include <vcmp_errordata.h>
 #include <vcmp_introspectiondata.h>
+#include <vcmp_remoteproceduredata.h>
 
 Q_LOGGING_CATEGORY(VEIN_API_QML, "\e[1;37m<Vein.Api.QML>\033[0m")
 Q_LOGGING_CATEGORY(VEIN_API_QML_VERBOSE, "\e[0;37m<Vein.Api.QML>\033[0m")
@@ -163,7 +164,7 @@ namespace VeinApiQml
 
             switch(eData->eventCommand())
             {
-              case VeinComponent::EntityData::ECMD_REMOVE:
+              case EntityData::Command::ECMD_REMOVE:
               {
                 if(m_entities.contains(entityId))
                 {
@@ -210,6 +211,19 @@ namespace VeinApiQml
               connect(eMap, &EntityComponentMap::sigSendEvent, this, &VeinQml::sigSendEvent);
               connect(eMap, &EntityComponentMap::sigLoadedChanged, this, &VeinQml::onEntityLoaded);
               eMap->setState(EntityComponentMap::DataState::ECM_PENDING);
+            }
+            break;
+          }
+          case RemoteProcedureData::dataType():
+          {
+            RemoteProcedureData *rpcData=0;
+            rpcData = static_cast<RemoteProcedureData *>(evData);
+            Q_ASSERT(rpcData != nullptr);
+            retVal = true;
+
+            if(m_entities.contains(rpcData->entityId())) /// @note component data is only processed after the introspection has been processed
+            {
+              m_entities.value(rpcData->entityId())->processRemoteProcedureData(rpcData);
             }
             break;
           }

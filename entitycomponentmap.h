@@ -4,13 +4,18 @@
 #include "qml-veinentity_global.h"
 
 #include <QQmlPropertyMap>
-#include <QJsonObject>
+#include <QJSValue>
+#include <QVariantMap>
+#include <QUuid>
+
+#include <vh_handlemanager.h>
 
 class QEvent;
 
 namespace VeinComponent
 {
   class ComponentData;
+  class RemoteProcedureData;
 }
 
 
@@ -45,6 +50,8 @@ namespace VeinApiQml
      */
     void processComponentData(VeinComponent::ComponentData *t_cData);
 
+    void processRemoteProcedureData(VeinComponent::RemoteProcedureData *t_rpcData);
+
     DataState state() const;
     /**
      * @brief setState
@@ -57,12 +64,21 @@ namespace VeinApiQml
     //alias for QQmlPropertyMap::contains
     Q_INVOKABLE bool hasComponent(const QString &t_componentName) const;
     Q_INVOKABLE int propertyCount() const;
+    /**
+     * @brief Calls remote procedure
+     * @param t_procedureName
+     * @param t_parameters
+     * @return id of the result to expect
+     */
+    Q_INVOKABLE QUuid invokeRPC(const QString &t_procedureName, const QVariantMap &t_parameters);
 
   signals:
     void sigSendEvent(QEvent *t_cEvent);
     void sigLoadedChanged(int t_entityId);
 
     void sigStateChanged(DataState t_state);
+
+    void sigRPCFinished(QUuid t_identifier, const QVariantMap &t_resultData);
 
 
   protected:
@@ -84,10 +100,18 @@ namespace VeinApiQml
      */
     QList<QString> m_pendingValues;
 
+    QList<QString> m_registeredRemoteProcedures;
+
     /**
-     * @brief QJson representation of the entity layout
+     * @brief Tracks rpc calls made by this instance
+     * @note the QJSValue can be a callable object or a null value
      */
-    QJsonObject m_entityIntrospection;
+    QSet<QUuid> m_pendingRPCCallbacks;
+
+    /**
+     * @brief QVariantMap representation of the entity layout
+     */
+    const QVariantMap m_entityIntrospection;
 
     /**
      * @brief intern state

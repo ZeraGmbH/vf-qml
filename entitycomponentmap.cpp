@@ -2,8 +2,13 @@
 
 #include <ve_commandevent.h>
 #include <vcmp_componentdata.h>
+#include <vcmp_remoteproceduredata.h>
 
 #include <QString>
+#include <QJsonObject>
+#include <QQmlEngine>
+#include <QJSValueList>
+
 
 using namespace VeinEvent;
 using namespace VeinComponent;
@@ -14,7 +19,7 @@ namespace VeinApiQml
 {
   EntityComponentMap::EntityComponentMap(int t_entityId, const QJsonObject &t_entityIntrospection, QObject *t_parent) :
     QQmlPropertyMap(this, t_parent),
-    m_entityIntrospection(t_entityIntrospection),
+    m_entityIntrospection(t_entityIntrospection.toVariantMap()),
     m_entityId(t_entityId)
   {
   }
@@ -58,6 +63,28 @@ namespace VeinApiQml
     }
   }
 
+  void EntityComponentMap::processRemoteProcedureData(RemoteProcedureData *t_rpcData)
+  {
+    Q_ASSERT(t_rpcData != nullptr);
+
+    switch(t_rpcData->command())
+    {
+      case RemoteProcedureData::Command::RPCMD_RESULT:
+      {
+        const QUuid rpcIdentifier = t_rpcData->invokationData().value("VeinApiQml::CallID").toUuid();
+        if(m_pendingRPCCallbacks.contains(rpcIdentifier))
+        {
+          vCDebug(VEIN_API_QML_VERBOSE) << "Received RPC result for entity:" << m_entityId << "procedureName:" << t_rpcData->procedureName() << "rpcData:" << t_rpcData->invokationData();
+          emit sigRPCFinished(rpcIdentifier, t_rpcData->invokationData());
+          m_pendingRPCCallbacks.remove(rpcIdentifier);
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
   EntityComponentMap::DataState EntityComponentMap::state() const
   {
     return m_state;
@@ -86,6 +113,36 @@ namespace VeinApiQml
   int EntityComponentMap::propertyCount() const
   {
     return count();
+  }
+
+  QUuid EntityComponentMap::invokeRPC(const QString &t_procedureName, const QVariantMap &t_parameters)
+  {
+    QUuid rpcIdentifier;
+    //check if a component exists that is callable
+    if(m_registeredRemoteProcedures.contains(t_procedureName))
+    {
+      do
+      {
+         rpcIdentifier = QUuid::createUuid();
+      } while(m_pendingRPCCallbacks.contains(rpcIdentifier)); //should only run once
+      m_pendingRPCCallbacks.insert(rpcIdentifier);
+      QVariantMap rpcParamData;
+      rpcParamData.insert("VeinApiQml::CallID", rpcIdentifier);
+      rpcParamData.insert("VeinApiQml::CallParameters", t_parameters);
+
+      VeinComponent::RemoteProcedureData *rpcData = new VeinComponent::RemoteProcedureData();
+      rpcData->setEntityId(m_entityId);
+      rpcData->setCommand(VeinComponent::RemoteProcedureData::Command::RPCMD_CALL);
+      rpcData->setEventOrigin(VeinComponent::ComponentData::EventOrigin::EO_LOCAL);
+      rpcData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
+      rpcData->setProcedureName(t_procedureName);
+      rpcData->setInvokationData(rpcParamData);
+      CommandEvent *cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, rpcData);
+      vCDebug(VEIN_API_QML_VERBOSE) << "Calling remote procedure of entity:" << m_entityId << "component:" << t_procedureName << "data:" << rpcParamData << "event:" << cEvent;
+
+      emit sigSendEvent(cEvent);
+    }
+    return rpcIdentifier;
   }
 
   QVariant EntityComponentMap::updateValue(const QString &t_key, const QVariant &t_newValue)
@@ -137,10 +194,11 @@ namespace VeinApiQml
     CommandEvent *cEvent = 0;
     ComponentData *cData = 0;
 
-    const QVariantMap tmpValues = m_entityIntrospection.toVariantMap();
-    const QList<QString> tmpKeys = tmpValues.value(QString("components")).toStringList();
-    m_pendingValues.append(tmpKeys);
-    for(const QString &tmpKey : tmpKeys)
+    const QList<QString> tmpComponentList = m_entityIntrospection.value(QString("components")).toStringList();
+    m_registeredRemoteProcedures = m_entityIntrospection.value(QString("procedures")).toStringList();
+    ///@todo const QList<QString> tmpFunctions = m_entityIntrospection.value(QString("remoteProcedures")).toStringList();
+    m_pendingValues.append(tmpComponentList);
+    for(const QString &tmpKey : tmpComponentList)
     {
       insert(tmpKey, QVariant()); // bypasses the function updateValue(...)
 
