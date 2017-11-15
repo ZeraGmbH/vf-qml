@@ -8,8 +8,6 @@
 #include <QVariantMap>
 #include <QUuid>
 
-#include <vh_handlemanager.h>
-
 class QEvent;
 
 namespace VeinComponent
@@ -43,6 +41,7 @@ namespace VeinApiQml
     Q_ENUMS(DataState)
 
     Q_PROPERTY(DataState state READ state NOTIFY sigStateChanged)
+    Q_PROPERTY(QStringList remoteProcedures READ getRemoteProcedureList NOTIFY sigRemoteProceduresChanged)
 
     /**
      * @brief processComponentData
@@ -72,6 +71,7 @@ namespace VeinApiQml
      */
     Q_INVOKABLE QUuid invokeRPC(const QString &t_procedureName, const QVariantMap &t_parameters);
 
+    Q_INVOKABLE QList<QString> getRemoteProcedureList() const;
   signals:
     void sigSendEvent(QEvent *t_cEvent);
     void sigLoadedChanged(int t_entityId);
@@ -79,7 +79,7 @@ namespace VeinApiQml
     void sigStateChanged(DataState t_state);
 
     void sigRPCFinished(QUuid t_identifier, const QVariantMap &t_resultData);
-
+    void sigRemoteProceduresChanged(QStringList t_procedureList);
 
   protected:
     /**

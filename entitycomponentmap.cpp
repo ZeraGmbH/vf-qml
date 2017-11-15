@@ -22,6 +22,7 @@ namespace VeinApiQml
     m_entityIntrospection(t_entityIntrospection.toVariantMap()),
     m_entityId(t_entityId)
   {
+    Q_ASSERT(m_entityId>=0);
   }
 
   void EntityComponentMap::processComponentData(VeinComponent::ComponentData *t_cData)
@@ -128,7 +129,7 @@ namespace VeinApiQml
       m_pendingRPCCallbacks.insert(rpcIdentifier);
       QVariantMap rpcParamData;
       rpcParamData.insert("VeinApiQml::CallID", rpcIdentifier);
-      rpcParamData.insert("VeinApiQml::CallParameters", t_parameters);
+      rpcParamData.insert(VeinComponent::RemoteProcedureData::s_parameterString, t_parameters);
 
       VeinComponent::RemoteProcedureData *rpcData = new VeinComponent::RemoteProcedureData();
       rpcData->setEntityId(m_entityId);
@@ -143,6 +144,11 @@ namespace VeinApiQml
       emit sigSendEvent(cEvent);
     }
     return rpcIdentifier;
+  }
+
+  QList<QString> EntityComponentMap::getRemoteProcedureList() const
+  {
+    return m_registeredRemoteProcedures;
   }
 
   QVariant EntityComponentMap::updateValue(const QString &t_key, const QVariant &t_newValue)
