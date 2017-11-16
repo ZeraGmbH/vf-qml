@@ -70,15 +70,28 @@ namespace VeinApiQml
      * @return id of the result to expect
      */
     Q_INVOKABLE QUuid invokeRPC(const QString &t_procedureName, const QVariantMap &t_parameters);
+    Q_INVOKABLE void cancelRPCInvokation(QUuid t_identifier);
 
     Q_INVOKABLE QList<QString> getRemoteProcedureList() const;
+
   signals:
     void sigSendEvent(QEvent *t_cEvent);
     void sigLoadedChanged(int t_entityId);
 
     void sigStateChanged(DataState t_state);
 
+    /**
+     * @brief The signal is emitted when a pending RPC call finishes
+     * @param t_identifier unique identifier of the rpc call
+     * @param t_resultData the result including the resultCode and eventual data
+     */
     void sigRPCFinished(QUuid t_identifier, const QVariantMap &t_resultData);
+    /**
+     * @brief The signal is emitted when a pending RPC call transmits progress information or streams data
+     * @param t_identifier unique identifier of the rpc call
+     * @param t_progressData the progress information or streamed data
+     */
+    void sigRPCProgress(QUuid t_identifier, const QVariantMap &t_progressData);
     void sigRemoteProceduresChanged(QStringList t_procedureList);
 
   protected:
@@ -103,10 +116,9 @@ namespace VeinApiQml
     QList<QString> m_registeredRemoteProcedures;
 
     /**
-     * @brief Tracks rpc calls made by this instance
-     * @note the QJSValue can be a callable object or a null value
+     * @brief Tracks rpc calls made by this instance QString is the procedure name
      */
-    QSet<QUuid> m_pendingRPCCallbacks;
+    QHash<QUuid, QString> m_pendingRPCCallbacks;
 
     /**
      * @brief QVariantMap representation of the entity layout

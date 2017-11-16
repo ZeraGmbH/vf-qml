@@ -68,21 +68,26 @@ namespace VeinApiQml
   {
     Q_ASSERT(t_rpcData != nullptr);
 
-    switch(t_rpcData->command())
+    const QUuid rpcIdentifier = t_rpcData->invokationData().value(RemoteProcedureData::s_callIdText).toUuid();
+    if(m_pendingRPCCallbacks.contains(rpcIdentifier))
     {
-      case RemoteProcedureData::Command::RPCMD_RESULT:
+      switch(t_rpcData->command())
       {
-        const QUuid rpcIdentifier = t_rpcData->invokationData().value("VeinApiQml::CallID").toUuid();
-        if(m_pendingRPCCallbacks.contains(rpcIdentifier))
+        case RemoteProcedureData::Command::RPCMD_RESULT:
         {
           vCDebug(VEIN_API_QML_VERBOSE) << "Received RPC result for entity:" << m_entityId << "procedureName:" << t_rpcData->procedureName() << "rpcData:" << t_rpcData->invokationData();
           emit sigRPCFinished(rpcIdentifier, t_rpcData->invokationData());
           m_pendingRPCCallbacks.remove(rpcIdentifier);
+          break;
         }
-        break;
+        case RemoteProcedureData::Command::RPCMD_PROGRESS:
+        {
+          emit sigRPCProgress(rpcIdentifier, t_rpcData->invokationData());
+          break;
+        }
+        default:
+          break;
       }
-      default:
-        break;
     }
   }
 
@@ -124,11 +129,11 @@ namespace VeinApiQml
     {
       do
       {
-         rpcIdentifier = QUuid::createUuid();
+        rpcIdentifier = QUuid::createUuid();
       } while(m_pendingRPCCallbacks.contains(rpcIdentifier)); //should only run once
-      m_pendingRPCCallbacks.insert(rpcIdentifier);
+      m_pendingRPCCallbacks.insert(rpcIdentifier, t_procedureName);
       QVariantMap rpcParamData;
-      rpcParamData.insert("VeinApiQml::CallID", rpcIdentifier);
+      rpcParamData.insert(RemoteProcedureData::s_callIdText, rpcIdentifier);
       rpcParamData.insert(VeinComponent::RemoteProcedureData::s_parameterString, t_parameters);
 
       VeinComponent::RemoteProcedureData *rpcData = new VeinComponent::RemoteProcedureData();
@@ -139,11 +144,32 @@ namespace VeinApiQml
       rpcData->setProcedureName(t_procedureName);
       rpcData->setInvokationData(rpcParamData);
       CommandEvent *cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, rpcData);
-      vCDebug(VEIN_API_QML_VERBOSE) << "Calling remote procedure of entity:" << m_entityId << "component:" << t_procedureName << "data:" << rpcParamData << "event:" << cEvent;
+      vCDebug(VEIN_API_QML_VERBOSE) << "Sending RPC to entity:" << m_entityId << "procedure:" << t_procedureName << "data:" << rpcParamData << "event:" << cEvent;
 
       emit sigSendEvent(cEvent);
     }
     return rpcIdentifier;
+  }
+
+  void EntityComponentMap::cancelRPCInvokation(QUuid t_identifier)
+  {
+    if(m_pendingRPCCallbacks.contains(t_identifier))
+    {
+      QVariantMap rpcParamData;
+      rpcParamData.insert(RemoteProcedureData::s_callIdText, t_identifier);
+
+      VeinComponent::RemoteProcedureData *rpcData = new VeinComponent::RemoteProcedureData();
+      rpcData->setEntityId(m_entityId);
+      rpcData->setCommand(VeinComponent::RemoteProcedureData::Command::RPCMD_CALL);
+      rpcData->setEventOrigin(VeinComponent::ComponentData::EventOrigin::EO_LOCAL);
+      rpcData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
+      rpcData->setProcedureName(m_pendingRPCCallbacks.value(t_identifier));
+      rpcData->setInvokationData(rpcParamData);
+      CommandEvent *cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, rpcData);
+      vCDebug(VEIN_API_QML_VERBOSE) << "Sending RPC cancellation to entity:" << m_entityId << "procedure:" << rpcData->procedureName() << "data:" << rpcParamData << "event:" << cEvent;
+
+      emit sigSendEvent(cEvent);
+    }
   }
 
   QList<QString> EntityComponentMap::getRemoteProcedureList() const
