@@ -25,25 +25,25 @@ namespace VeinApiQml
     Q_ASSERT(m_entityId>=0);
   }
 
-  void EntityComponentMap::processComponentData(VeinComponent::ComponentData *t_cData)
+  void EntityComponentMap::processComponentData(ComponentData *t_cData)
   {
     switch(t_cData->eventCommand())
     {
-      case VeinComponent::ComponentData::Command::CCMD_ADD:
-      case VeinComponent::ComponentData::Command::CCMD_SET:
+      case ComponentData::Command::CCMD_ADD:
+      case ComponentData::Command::CCMD_SET:
       {
         vCDebug(VEIN_API_QML_VERBOSE) << "Updated value" << t_cData->componentName() << t_cData->newValue();
         insert(t_cData->componentName(), t_cData->newValue()); // bypasses the function updateValue(...)
         break;
       }
-      case VeinComponent::ComponentData::Command::CCMD_REMOVE:
+      case ComponentData::Command::CCMD_REMOVE:
       {
         /// @note It is not possible to remove keys from the map; once a key has been added, you can only modify or clear its associated value.
         /// @note Keys that have been cleared will still appear in this list, even though their associated values are invalid
         clear(t_cData->componentName());
         break;
       }
-      case VeinComponent::ComponentData::Command::CCMD_FETCH:
+      case ComponentData::Command::CCMD_FETCH:
       {
         if(m_pendingValues.contains(t_cData->componentName()))
         {
@@ -134,13 +134,13 @@ namespace VeinApiQml
       m_pendingRPCCallbacks.insert(rpcIdentifier, t_procedureName);
       QVariantMap rpcParamData;
       rpcParamData.insert(RemoteProcedureData::s_callIdText, rpcIdentifier);
-      rpcParamData.insert(VeinComponent::RemoteProcedureData::s_parameterString, t_parameters);
+      rpcParamData.insert(RemoteProcedureData::s_parameterString, t_parameters);
 
-      VeinComponent::RemoteProcedureData *rpcData = new VeinComponent::RemoteProcedureData();
+      RemoteProcedureData *rpcData = new RemoteProcedureData();
       rpcData->setEntityId(m_entityId);
-      rpcData->setCommand(VeinComponent::RemoteProcedureData::Command::RPCMD_CALL);
-      rpcData->setEventOrigin(VeinComponent::ComponentData::EventOrigin::EO_LOCAL);
-      rpcData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
+      rpcData->setCommand(RemoteProcedureData::Command::RPCMD_CALL);
+      rpcData->setEventOrigin(ComponentData::EventOrigin::EO_LOCAL);
+      rpcData->setEventTarget(ComponentData::EventTarget::ET_ALL);
       rpcData->setProcedureName(t_procedureName);
       rpcData->setInvokationData(rpcParamData);
       CommandEvent *cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, rpcData);
@@ -158,11 +158,11 @@ namespace VeinApiQml
       QVariantMap rpcParamData;
       rpcParamData.insert(RemoteProcedureData::s_callIdText, t_identifier);
 
-      VeinComponent::RemoteProcedureData *rpcData = new VeinComponent::RemoteProcedureData();
+      RemoteProcedureData *rpcData = new RemoteProcedureData();
       rpcData->setEntityId(m_entityId);
-      rpcData->setCommand(VeinComponent::RemoteProcedureData::Command::RPCMD_CALL);
-      rpcData->setEventOrigin(VeinComponent::ComponentData::EventOrigin::EO_LOCAL);
-      rpcData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
+      rpcData->setCommand(RemoteProcedureData::Command::RPCMD_CALL);
+      rpcData->setEventOrigin(ComponentData::EventOrigin::EO_LOCAL);
+      rpcData->setEventTarget(ComponentData::EventTarget::ET_ALL);
       rpcData->setProcedureName(m_pendingRPCCallbacks.value(t_identifier));
       rpcData->setInvokationData(rpcParamData);
       CommandEvent *cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, rpcData);
@@ -192,11 +192,11 @@ namespace VeinApiQml
         ComponentData *cData = 0;
         CommandEvent *cEvent = 0;
 
-        cData = new VeinComponent::ComponentData();
+        cData = new ComponentData();
         cData->setEntityId(m_entityId);
-        cData->setCommand(VeinComponent::ComponentData::Command::CCMD_SET);
-        cData->setEventOrigin(VeinComponent::ComponentData::EventOrigin::EO_LOCAL);
-        cData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
+        cData->setCommand(ComponentData::Command::CCMD_SET);
+        cData->setEventOrigin(ComponentData::EventOrigin::EO_LOCAL);
+        cData->setEventTarget(ComponentData::EventTarget::ET_ALL);
         cData->setComponentName(t_key);
 
         if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantList) && t_newValue.toList().isEmpty() == false))
@@ -234,11 +234,11 @@ namespace VeinApiQml
     {
       insert(tmpKey, QVariant()); // bypasses the function updateValue(...)
 
-      cData = new VeinComponent::ComponentData();
+      cData = new ComponentData();
       cData->setEntityId(m_entityId);
-      cData->setCommand(VeinComponent::ComponentData::Command::CCMD_FETCH);
-      cData->setEventOrigin(VeinComponent::ComponentData::EventOrigin::EO_LOCAL);
-      cData->setEventTarget(VeinComponent::ComponentData::EventTarget::ET_ALL);
+      cData->setCommand(ComponentData::Command::CCMD_FETCH);
+      cData->setEventOrigin(ComponentData::EventOrigin::EO_LOCAL);
+      cData->setEventTarget(ComponentData::EventTarget::ET_ALL);
       cData->setComponentName(tmpKey);
       cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, cData);
       vCDebug(VEIN_API_QML_VERBOSE) << "Fetching entity data for entityId:" << m_entityId << "component:" << tmpKey << "event:" << cEvent;
