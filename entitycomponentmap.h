@@ -113,6 +113,9 @@ namespace VeinApiQml
      */
     QList<QString> m_pendingValues;
 
+    /**
+     * @brief list of available remote procedures
+     */
     QList<QString> m_registeredRemoteProcedures;
 
     /**

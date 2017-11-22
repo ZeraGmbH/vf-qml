@@ -148,6 +148,10 @@ namespace VeinApiQml
 
       emit sigSendEvent(cEvent);
     }
+    else
+    {
+      qWarning() << "No rpc with procedure name:" << t_procedureName;
+    }
     return rpcIdentifier;
   }
 
