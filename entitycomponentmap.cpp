@@ -68,7 +68,7 @@ namespace VeinApiQml
   {
     Q_ASSERT(t_rpcData != nullptr);
 
-    const QUuid rpcIdentifier = t_rpcData->invokationData().value(RemoteProcedureData::s_callIdText).toUuid();
+    const QUuid rpcIdentifier = t_rpcData->invokationData().value(RemoteProcedureData::s_callIdString).toUuid();
     if(m_pendingRPCCallbacks.contains(rpcIdentifier))
     {
       switch(t_rpcData->command())
@@ -133,7 +133,7 @@ namespace VeinApiQml
       } while(m_pendingRPCCallbacks.contains(rpcIdentifier)); //should only run once
       m_pendingRPCCallbacks.insert(rpcIdentifier, t_procedureName);
       QVariantMap rpcParamData;
-      rpcParamData.insert(RemoteProcedureData::s_callIdText, rpcIdentifier);
+      rpcParamData.insert(RemoteProcedureData::s_callIdString, rpcIdentifier);
       rpcParamData.insert(RemoteProcedureData::s_parameterString, t_parameters);
 
       RemoteProcedureData *rpcData = new RemoteProcedureData();
@@ -160,7 +160,7 @@ namespace VeinApiQml
     if(m_pendingRPCCallbacks.contains(t_identifier))
     {
       QVariantMap rpcParamData;
-      rpcParamData.insert(RemoteProcedureData::s_callIdText, t_identifier);
+      rpcParamData.insert(RemoteProcedureData::s_callIdString, t_identifier);
 
       RemoteProcedureData *rpcData = new RemoteProcedureData();
       rpcData->setEntityId(m_entityId);
@@ -232,7 +232,6 @@ namespace VeinApiQml
 
     const QList<QString> tmpComponentList = m_entityIntrospection.value(QString("components")).toStringList();
     m_registeredRemoteProcedures = m_entityIntrospection.value(QString("procedures")).toStringList();
-    ///@todo const QList<QString> tmpFunctions = m_entityIntrospection.value(QString("remoteProcedures")).toStringList();
     m_pendingValues.append(tmpComponentList);
     for(const QString &tmpKey : tmpComponentList)
     {
