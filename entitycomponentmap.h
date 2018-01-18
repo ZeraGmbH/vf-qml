@@ -30,7 +30,7 @@ namespace VeinApiQml
     EntityComponentMap() = delete;
 
   public:
-    explicit EntityComponentMap(int t_entityId, const QJsonObject &t_entityIntrospection, QObject *t_parent=0);
+    explicit EntityComponentMap(int t_entityId, const QJsonObject &t_entityIntrospection, QObject *t_parent=nullptr);
 
     enum class DataState : int {
       ECM_NONE = -1, /**< uninitialized */

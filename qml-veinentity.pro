@@ -21,9 +21,9 @@ public_headers.files = $$HEADERS
 
 
 
-QT       += qml quick network
+QT       += qml
 
-QT       -= gui
+QT       -= gui quick
 
 TARGET = qml-veinentity
 

@@ -189,46 +189,43 @@ namespace VeinApiQml
       vCDebug(VEIN_API_QML) << QString("Invalid value for entity: %1 component: %2 value: ").arg(m_entityId).arg(t_key) << t_newValue;
       VF_ASSERT(t_newValue.isValid(), "Invalid value set from QML");
     }
-    else
+    else if(retVal != t_newValue)
     {
-      if(retVal != t_newValue)
+      ComponentData *cData = nullptr;
+      CommandEvent *cEvent = nullptr;
+
+      cData = new ComponentData();
+      cData->setEntityId(m_entityId);
+      cData->setCommand(ComponentData::Command::CCMD_SET);
+      cData->setEventOrigin(ComponentData::EventOrigin::EO_LOCAL);
+      cData->setEventTarget(ComponentData::EventTarget::ET_ALL);
+      cData->setComponentName(t_key);
+
+      if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantList) && t_newValue.toList().isEmpty() == false))
       {
-        ComponentData *cData = 0;
-        CommandEvent *cEvent = 0;
-
-        cData = new ComponentData();
-        cData->setEntityId(m_entityId);
-        cData->setCommand(ComponentData::Command::CCMD_SET);
-        cData->setEventOrigin(ComponentData::EventOrigin::EO_LOCAL);
-        cData->setEventTarget(ComponentData::EventTarget::ET_ALL);
-        cData->setComponentName(t_key);
-
-        if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantList) && t_newValue.toList().isEmpty() == false))
-        {
-          cData->setNewValue(t_newValue.toList());
-        }
-        else if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantMap)))
-        {
-          cData->setNewValue(t_newValue.toMap());
-        }
-        else
-        {
-          cData->setNewValue(t_newValue);
-        }
-
-        cData->setOldValue(retVal);
-        cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, cData);
-
-        emit sigSendEvent(cEvent);
+        cData->setNewValue(t_newValue.toList());
       }
+      else if(Q_UNLIKELY(t_newValue.canConvert(QMetaType::QVariantMap)))
+      {
+        cData->setNewValue(t_newValue.toMap());
+      }
+      else
+      {
+        cData->setNewValue(t_newValue);
+      }
+
+      cData->setOldValue(retVal);
+      cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, cData);
+
+      emit sigSendEvent(cEvent);
     }
     return retVal;
   }
 
   void EntityComponentMap::loadEntityData()
   {
-    CommandEvent *cEvent = 0;
-    ComponentData *cData = 0;
+    CommandEvent *cEvent = nullptr;
+    ComponentData *cData = nullptr;
 
     const QList<QString> tmpComponentList = m_entityIntrospection.value(QString("components")).toStringList();
     m_registeredRemoteProcedures = m_entityIntrospection.value(QString("procedures")).toStringList();

@@ -37,7 +37,7 @@ namespace VeinApiQml
 
   EntityComponentMap *VeinQml::getEntity(const QString &t_entityName) const
   {
-    EntityComponentMap *retVal = 0;
+    EntityComponentMap *retVal = nullptr;
     const int entityId = idFromEntityName(t_entityName); /// @todo this is a performance bottleneck
 
     if(entityId>=0 && m_entities.contains(entityId))
@@ -55,13 +55,12 @@ namespace VeinApiQml
   bool VeinQml::hasEntity(const QString &t_entityName) const
   {
     const int entityId = idFromEntityName(t_entityName);
-
     return entityId>=0 && m_entities.contains(entityId);
   }
 
   EntityComponentMap *VeinQml::getEntityById(int t_id) const
   {
-    return m_entities.value(t_id, 0);
+    return m_entities.value(t_id, nullptr);
   }
 
   QList<int> VeinQml::getEntityList() const
@@ -90,7 +89,8 @@ namespace VeinApiQml
     const QSet<int> toRemove = QSet<int>::fromList(m_requiredIds);
     const QSet<int> toAdd = QSet<int>::fromList(t_requiredEntityIds);
 
-    for(const int removedId : toRemove) {
+    for(const int removedId : toRemove)
+    {
       m_resolvedIds.removeAll(removedId);
       EntityComponentMap *toDelete = m_entities.value(removedId);
       m_entities.remove(removedId);
@@ -129,13 +129,13 @@ namespace VeinApiQml
 
     if(t_event->type()==CommandEvent::eventType())
     {
-      CommandEvent *cEvent = 0;
-      EventData *evData = 0;
+      CommandEvent *cEvent = nullptr;
+      EventData *evData = nullptr;
       cEvent = static_cast<CommandEvent *>(t_event);
-      Q_ASSERT(cEvent != 0);
+      Q_ASSERT(cEvent != nullptr);
 
       evData = cEvent->eventData();
-      Q_ASSERT(evData != 0);
+      Q_ASSERT(evData != nullptr);
 
       if(cEvent->eventSubtype() == CommandEvent::EventSubtype::NOTIFICATION)
       {
@@ -144,7 +144,7 @@ namespace VeinApiQml
         {
           case ComponentData::dataType():
           {
-            ComponentData *cData=0;
+            ComponentData *cData=nullptr;
             cData = static_cast<ComponentData *>(evData);
             Q_ASSERT(cData != nullptr);
             retVal = true;
@@ -157,7 +157,7 @@ namespace VeinApiQml
           }
           case EntityData::dataType():
           {
-            EntityData *eData=0;
+            EntityData *eData=nullptr;
             eData = static_cast<EntityData *>(evData);
             retVal = true;
             int entityId =eData->entityId();
@@ -191,14 +191,14 @@ namespace VeinApiQml
           }
           case ErrorData::dataType(): /// @todo add message queue and check if the error belongs to actions taken from this client
           {
-            ErrorData *errData=0;
+            ErrorData *errData=nullptr;
             errData = static_cast<ErrorData *>(evData);
             qCWarning(VEIN_API_QML_INTROSPECTION) << "Received error:" <<errData->errorDescription();
             break;
           }
           case IntrospectionData::dataType():
           {
-            IntrospectionData *iData=0;
+            IntrospectionData *iData=nullptr;
             iData = static_cast<IntrospectionData *>(evData);
             retVal = true;
             int entityId = iData->entityId();
@@ -216,7 +216,7 @@ namespace VeinApiQml
           }
           case RemoteProcedureData::dataType():
           {
-            RemoteProcedureData *rpcData=0;
+            RemoteProcedureData *rpcData=nullptr;
             rpcData = static_cast<RemoteProcedureData *>(evData);
             Q_ASSERT(rpcData != nullptr);
             retVal = true;
@@ -291,5 +291,5 @@ namespace VeinApiQml
   }
 
 
-  VeinQml *VeinQml::s_staticInstance = 0;
+  VeinQml *VeinQml::s_staticInstance = nullptr;
 }

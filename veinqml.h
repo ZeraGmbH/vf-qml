@@ -30,7 +30,7 @@ namespace VeinApiQml
      *
      * @note if used with the QML engine (e.g. qmlRegisterSingletonType<VeinQml>...) then the instance is owned by QML and will also be deleted by the QML engine
      */
-    explicit VeinQml(QObject *t_parent = 0);
+    explicit VeinQml(QObject *t_parent = nullptr);
     ~VeinQml();
 
     enum class ConnectionState : int {
@@ -60,6 +60,10 @@ namespace VeinApiQml
     static VeinQml *getStaticInstance();
     static void setStaticInstance(VeinQml *t_instance);
 
+    /**
+      * @todo replace with reference counting subscription hash that will allow to only subscribe to the needed entity in the qml file where it is required
+      * (could also be blocking the gui until the subscription is resolved?)
+      */
     Q_INVOKABLE void setRequiredIds(QList<int> t_requiredEntityIds);
 
     // EventSystem interface
