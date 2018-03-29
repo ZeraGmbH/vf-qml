@@ -140,7 +140,7 @@ namespace VeinApiQml
       if(cEvent->eventSubtype() == CommandEvent::EventSubtype::NOTIFICATION)
       {
         /// @todo add support for network events (connected / disconnected / error)
-        switch (evData->type())
+        switch(evData->type())
         {
           case ComponentData::dataType():
           {
