@@ -11,6 +11,8 @@
 #include <vcmp_introspectiondata.h>
 #include <vcmp_remoteproceduredata.h>
 
+#include <QQmlEngine>
+
 Q_LOGGING_CATEGORY(VEIN_API_QML, "\e[1;37m<Vein.Api.QML>\033[0m")
 Q_LOGGING_CATEGORY(VEIN_API_QML_VERBOSE, "\e[0;37m<Vein.Api.QML>\033[0m")
 
@@ -27,7 +29,12 @@ namespace VeinApiQml
 
   VeinQml::~VeinQml()
   {
-
+    const auto entityList = m_entities.values();
+    for(EntityComponentMap *toDelete : entityList)
+    {
+      toDelete->deleteLater();
+    }
+    m_entities.clear();
   }
 
   VeinQml::ConnectionState VeinQml::state() const
@@ -49,6 +56,8 @@ namespace VeinApiQml
       qCWarning(VEIN_API_QML) << "No entity found with name:" << t_entityName;
     }
 
+    QQmlEngine::setObjectOwnership(retVal, QQmlEngine::CppOwnership); //see: http://doc.qt.io/qt-5/qtqml-cppintegration-data.html#data-ownership
+
     return retVal;
   }
 
@@ -60,7 +69,13 @@ namespace VeinApiQml
 
   EntityComponentMap *VeinQml::getEntityById(int t_id) const
   {
-    return m_entities.value(t_id, nullptr);
+    EntityComponentMap *retVal = nullptr;
+    if(m_entities.contains(t_id))
+    {
+      retVal = m_entities.value(t_id);
+      QQmlEngine::setObjectOwnership(retVal, QQmlEngine::CppOwnership); //see: http://doc.qt.io/qt-5/qtqml-cppintegration-data.html#data-ownership
+    }
+    return retVal;
   }
 
   QList<int> VeinQml::getEntityList() const
@@ -172,7 +187,7 @@ namespace VeinApiQml
                   eMap->setState(EntityComponentMap::DataState::ECM_REMOVED);
 
                   m_entities.remove(entityId);
-                  delete eMap;
+                  eMap->deleteLater();
 
                   if(m_requiredIds.contains(entityId))
                   {
