@@ -76,7 +76,7 @@ namespace VeinApiQml
 
   signals:
     void sigSendEvent(QEvent *t_cEvent);
-    void sigLoadedChanged(int t_entityId);
+    void sigEntityComplete(int t_entityId);
 
     void sigStateChanged(DataState t_state);
 

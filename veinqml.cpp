@@ -224,7 +224,7 @@ namespace VeinApiQml
               EntityComponentMap *eMap = new EntityComponentMap(entityId, iData->jsonData(), this);
               m_entities.insert(entityId, eMap);
               connect(eMap, &EntityComponentMap::sigSendEvent, this, &VeinQml::sigSendEvent);
-              connect(eMap, &EntityComponentMap::sigLoadedChanged, this, &VeinQml::onEntityLoaded);
+              connect(eMap, &EntityComponentMap::sigEntityComplete, this, &VeinQml::onEntityLoaded);
               eMap->setState(EntityComponentMap::DataState::ECM_PENDING);
             }
             break;

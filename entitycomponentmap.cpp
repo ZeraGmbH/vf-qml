@@ -52,7 +52,7 @@ namespace VeinApiQml
           m_pendingValues.removeAll(t_cData->componentName());
           if(m_pendingValues.isEmpty())
           {
-            emit sigLoadedChanged(m_entityId);
+            emit sigEntityComplete(m_entityId);
           }
         }
         break;
