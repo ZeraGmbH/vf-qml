@@ -96,46 +96,53 @@ namespace VeinApiQml
     }
   }
 
-  void VeinQml::setRequiredIds(QList<int> t_requiredEntityIds)
+  void VeinQml::entitySubscribeById(int t_entityId)
   {
-    vCDebug(VEIN_API_QML) << "Set required ids from:" << m_requiredIds << "to:" << t_requiredEntityIds;
-    m_state = ConnectionState::VQ_IDLE;
-    sigStateChanged(m_state);
-    const QSet<int> toRemove = QSet<int>::fromList(m_requiredIds);
-    const QSet<int> toAdd = QSet<int>::fromList(t_requiredEntityIds);
-
-    for(const int removedId : toRemove)
-    {
-      m_resolvedIds.removeAll(removedId);
-      EntityComponentMap *toDelete = m_entities.value(removedId);
-      m_entities.remove(removedId);
-      toDelete->deleteLater();
-      EntityData *eData = new EntityData();
-      eData->setCommand(EntityData::Command::ECMD_UNSUBSCRIBE);
-      eData->setEntityId(removedId);
-      eData->setEventOrigin(EntityData::EventOrigin::EO_LOCAL);
-      eData->setEventTarget(EntityData::EventTarget::ET_ALL);
-
-      CommandEvent *cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, eData);
-
-      vCDebug(VEIN_API_QML) << "Removing now obsolete subscription to entityId:" << removedId;
-
-      emit sigSendEvent(cEvent);
-    }
-
-    for(const int newId : toAdd) /// @bug currently it's possible to send subscription events for entities already subscribed to
+    if(m_entities.contains(t_entityId) == false)
     {
       EntityData *eData = new EntityData();
       eData->setCommand(EntityData::Command::ECMD_SUBSCRIBE);
-      eData->setEntityId(newId);
+      eData->setEntityId(t_entityId);
       eData->setEventOrigin(EntityData::EventOrigin::EO_LOCAL);
       eData->setEventTarget(EntityData::EventTarget::ET_ALL);
 
       CommandEvent *cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, eData);
-
       emit sigSendEvent(cEvent);
     }
-    m_requiredIds = t_requiredEntityIds;
+    quint32 subscriptionCount = m_entitySubscriptionReferenceTables.value(t_entityId, 0);
+    subscriptionCount++;
+    m_entitySubscriptionReferenceTables.insert(t_entityId, subscriptionCount);
+
+    vCDebug(VEIN_API_QML_VERBOSE) << "Subscription added for entity:" << t_entityId << "new subscriptionCount:" << subscriptionCount;
+  }
+
+  void VeinQml::entityUnsubscribeById(int t_entityId)
+  {
+    Q_ASSERT(m_entities.contains(t_entityId));//unsubscribe for unknown entity?
+    quint32 subscriptionCount = m_entitySubscriptionReferenceTables.value(t_entityId, 0);
+    Q_ASSERT(subscriptionCount>0); //unsubscribe when never subscribed?
+
+
+    if(subscriptionCount > 0)
+    {
+      subscriptionCount--;
+      m_entitySubscriptionReferenceTables.insert(t_entityId, subscriptionCount);
+    }
+
+    if(subscriptionCount == 0)
+    {
+      removeEntity(t_entityId);
+      EntityData *eData = new EntityData();
+      eData->setCommand(EntityData::Command::ECMD_UNSUBSCRIBE);
+      eData->setEntityId(t_entityId);
+      eData->setEventOrigin(EntityData::EventOrigin::EO_LOCAL);
+      eData->setEventTarget(EntityData::EventTarget::ET_ALL);
+
+      CommandEvent *cEvent = new CommandEvent(CommandEvent::EventSubtype::TRANSACTION, eData);
+      emit sigSendEvent(cEvent);
+    }
+
+    vCDebug(VEIN_API_QML_VERBOSE) << "Subscription removed for entity:" << t_entityId << "new subscriptionCount:" << subscriptionCount;
   }
 
   bool VeinQml::processEvent(QEvent *t_event)
@@ -189,9 +196,9 @@ namespace VeinApiQml
                   m_entities.remove(entityId);
                   eMap->deleteLater();
 
-                  if(m_requiredIds.contains(entityId))
+                  if(m_entitySubscriptionReferenceTables.contains(entityId))
                   {
-                    m_resolvedIds.removeAll(entityId);
+                    m_resolvedIds.remove(entityId);
                     qCCritical(VEIN_API_QML_INTROSPECTION) << "Required entity was removed remotely, entity id:" << entityId;
                     m_state = ConnectionState::VQ_ERROR;
                     emit sigStateChanged(m_state);
@@ -254,19 +261,17 @@ namespace VeinApiQml
   {
     m_state = ConnectionState::VQ_IDLE;
     emit sigStateChanged(m_state);
-    if(m_requiredIds.contains(t_entityId))
+    if(m_entitySubscriptionReferenceTables.contains(t_entityId))
     {
       vCDebug(VEIN_API_QML) << "Fetched required entity:" << t_entityId;
 
       /// @todo PRIO check ecm_ready use
       //m_entities.value(t_entityId)->setState(EntityComponentMap::DataState::ECM_READY);
-      m_resolvedIds.append(t_entityId);
+      m_resolvedIds.insert(t_entityId);
       emit sigEntityAvailable(nameFromEntityId(t_entityId)); // needs to be called before sigStateChanged(), or the list of entities may be already deleted from a setRequiredIds() call
       if(m_state != ConnectionState::VQ_LOADED)
       {
-        std::sort(m_requiredIds.begin(), m_requiredIds.end());
-        std::sort(m_resolvedIds.begin(), m_resolvedIds.end());
-        if(m_requiredIds == m_resolvedIds)
+        if(m_resolvedIds.contains(m_entitySubscriptionReferenceTables.keys().toSet()))
         {
           vCDebug(VEIN_API_QML) << "All required entities resolved";
           m_state = ConnectionState::VQ_LOADED;
@@ -305,6 +310,15 @@ namespace VeinApiQml
     return retVal;
   }
 
+  void VeinQml::removeEntity(int t_entityId)
+  {
+    m_entitySubscriptionReferenceTables.remove(t_entityId);
+    m_resolvedIds.remove(t_entityId);
+    EntityComponentMap *toDelete = m_entities.value(t_entityId);
+    toDelete->setState(EntityComponentMap::DataState::ECM_REMOVED);
+    m_entities.remove(t_entityId);
+    toDelete->deleteLater();
+  }
 
   VeinQml *VeinQml::s_staticInstance = nullptr;
 }

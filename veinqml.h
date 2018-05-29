@@ -15,7 +15,6 @@ class QQmlPropertyMap;
 namespace VeinApiQml
 {
   class EntityComponentMap;
-
   /**
    * @brief QML binding to interoperate with entity/component data via VeinApiQml::EntityComponentMap
    */
@@ -42,7 +41,6 @@ namespace VeinApiQml
     Q_ENUMS(ConnectionState)
 
     Q_PROPERTY(ConnectionState state READ state NOTIFY sigStateChanged)
-
     ConnectionState state() const;
 
     Q_INVOKABLE EntityComponentMap *getEntity(const QString &t_entityName) const;
@@ -60,11 +58,8 @@ namespace VeinApiQml
     static VeinQml *getStaticInstance();
     static void setStaticInstance(VeinQml *t_instance);
 
-    /**
-      * @todo replace with reference counting subscription hash that will allow to only subscribe to the needed entity in the qml file where it is required
-      * (could also be blocking the gui until the subscription is resolved?)
-      */
-    Q_INVOKABLE void setRequiredIds(QList<int> t_requiredEntityIds);
+    Q_INVOKABLE void entitySubscribeById(int t_entityId);
+    Q_INVOKABLE void entityUnsubscribeById(int t_entityId);
 
     // EventSystem interface
   public:
@@ -100,6 +95,7 @@ namespace VeinApiQml
      */
     int idFromEntityName(const QString &t_entityName) const;
     QString nameFromEntityId(int t_entityId) const;
+    void removeEntity(int t_entityId);
 
     /**
      * @brief The state describes if the system is usable (e.g. in the VQ_LOADED state)
@@ -112,14 +108,14 @@ namespace VeinApiQml
     QHash<int, EntityComponentMap *> m_entities;
 
     /**
-     * @brief Describes the entity ids whose introspection data is required to enter the VQ_LOADED ConnectionState
+     * @brief Reference tracking table for entity subscriptions
      */
-    QList<int> m_requiredIds;
+    QHash<int, quint32> m_entitySubscriptionReferenceTables;
 
     /**
      * @brief Describes the resolved ids of the required list
      */
-    QList<int> m_resolvedIds;
+    QSet<int> m_resolvedIds;
 
     /**
      * @brief QML singleton instance
