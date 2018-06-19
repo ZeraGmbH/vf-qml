@@ -13,7 +13,7 @@
 using namespace VeinEvent;
 using namespace VeinComponent;
 
-Q_LOGGING_CATEGORY(VEIN_API_QML_INTROSPECTION, "\e[1;37m<Vein.Api.QML.Introspection>\033[0m")
+Q_LOGGING_CATEGORY(VEIN_API_QML_INTROSPECTION, VEIN_DEBUGNAME_QML_INTROSPECTION)
 
 namespace VeinApiQml
 {
