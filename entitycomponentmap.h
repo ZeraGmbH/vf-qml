@@ -30,7 +30,7 @@ namespace VeinApiQml
     EntityComponentMap() = delete;
 
   public:
-    explicit EntityComponentMap(int t_entityId, const QJsonObject &t_entityIntrospection, QObject *t_parent=nullptr);
+    explicit EntityComponentMap(int t_entityId, const QVariantHash &t_entityIntrospection, QObject *t_parent=nullptr);
 
     enum class DataState : int {
       ECM_NONE = -1, /**< uninitialized */
@@ -44,7 +44,7 @@ namespace VeinApiQml
     Q_PROPERTY(QStringList remoteProcedures READ getRemoteProcedureList NOTIFY sigRemoteProceduresChanged)
 
     /**
-     * @brief processComponentData
+     * @brief see inline comments
      * @param t_cData
      */
     void processComponentData(VeinComponent::ComponentData *t_cData);
@@ -53,7 +53,7 @@ namespace VeinApiQml
 
     DataState state() const;
     /**
-     * @brief setState
+     * @brief calls loadEntityData() if the t_dataState is ECM_PENDING
      * @param t_dataState
      * @note not callable from QML
      */
@@ -126,7 +126,7 @@ namespace VeinApiQml
     /**
      * @brief QVariantMap representation of the entity layout
      */
-    const QVariantMap m_entityIntrospection;
+    const QVariantHash m_entityIntrospection;
 
     /**
      * @brief intern state

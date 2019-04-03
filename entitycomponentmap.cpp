@@ -5,7 +5,6 @@
 #include <vcmp_remoteproceduredata.h>
 
 #include <QString>
-#include <QJsonObject>
 #include <QQmlEngine>
 #include <QJSValueList>
 
@@ -17,9 +16,9 @@ Q_LOGGING_CATEGORY(VEIN_API_QML_INTROSPECTION, VEIN_DEBUGNAME_QML_INTROSPECTION)
 
 namespace VeinApiQml
 {
-  EntityComponentMap::EntityComponentMap(int t_entityId, const QJsonObject &t_entityIntrospection, QObject *t_parent) :
+  EntityComponentMap::EntityComponentMap(int t_entityId, const QVariantHash &t_entityIntrospection, QObject *t_parent) :
     QQmlPropertyMap(this, t_parent),
-    m_entityIntrospection(t_entityIntrospection.toVariantMap()),
+    m_entityIntrospection(t_entityIntrospection),
     m_entityId(t_entityId)
   {
     Q_ASSERT(m_entityId>=0);
