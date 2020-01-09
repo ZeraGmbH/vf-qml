@@ -1,7 +1,7 @@
 #ifndef VEINAPIQML_QMLWRAPPER_H
 #define VEINAPIQML_QMLWRAPPER_H
 
-#include "qml-veinentity_global.h"
+#include "globalIncludes.h"
 
 #include <QObject>
 
@@ -16,7 +16,7 @@ namespace VeinApiQml {
   /**
    * @brief Registers the types VeinApiQml::VeinQml and VeinApiQml::EntityComponentMap with the QML engine
    */
-  class QMLVEINENTITYSHARED_EXPORT QmlWrapper
+  class VFQML_EXPORT QmlWrapper
   {
   public:
     QmlWrapper();

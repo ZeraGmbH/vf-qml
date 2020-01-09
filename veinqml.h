@@ -1,7 +1,7 @@
 #ifndef VEINQML_H
 #define VEINQML_H
 
-#include "qml-veinentity_global.h"
+#include "globalIncludes.h"
 
 #include <ve_eventsystem.h>
 
@@ -18,7 +18,7 @@ namespace VeinApiQml
   /**
    * @brief QML binding to interoperate with entity/component data via VeinApiQml::EntityComponentMap
    */
-  class QMLVEINENTITYSHARED_EXPORT VeinQml : public VeinEvent::EventSystem
+  class VFQML_EXPORT VeinQml : public VeinEvent::EventSystem
   {
     Q_OBJECT
 

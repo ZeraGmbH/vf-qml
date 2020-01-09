@@ -1,7 +1,7 @@
 #ifndef ENTITYCOMPONENTMAP_H
 #define ENTITYCOMPONENTMAP_H
 
-#include "qml-veinentity_global.h"
+#include "globalIncludes.h"
 
 #include <QQmlPropertyMap>
 #include <QJSValue>
@@ -22,7 +22,7 @@ namespace VeinApiQml
   /**
    * @brief QML accessible interface for accessing VeinEvent functionality
    */
-  class QMLVEINENTITYSHARED_EXPORT EntityComponentMap : public QQmlPropertyMap
+  class VFQML_EXPORT EntityComponentMap : public QQmlPropertyMap
   {
     Q_OBJECT
 
