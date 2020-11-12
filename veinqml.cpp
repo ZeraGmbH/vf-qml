@@ -271,7 +271,8 @@ namespace VeinApiQml
       emit sigEntityAvailable(nameFromEntityId(t_entityId)); // needs to be called before sigStateChanged(), or the list of entities may be already deleted from a setRequiredIds() call
       if(m_state != ConnectionState::VQ_LOADED)
       {
-        if(m_resolvedIds.contains(m_entitySubscriptionReferenceTables.keys().toSet()))
+        QList<int> entitySubscriptionReferenceTableList = m_entitySubscriptionReferenceTables.keys();
+        if(m_resolvedIds.contains(QSet<int>(entitySubscriptionReferenceTableList.begin(), entitySubscriptionReferenceTableList.end())))
         {
           vCDebug(VEIN_API_QML) << "All required entities resolved";
           m_state = ConnectionState::VQ_LOADED;
