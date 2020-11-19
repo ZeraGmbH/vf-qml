@@ -128,7 +128,16 @@ QUuid EntityComponentMap::invokeRPC(const QString &t_procedureName, const QVaria
         emit sigSendEvent(cEvent);
     }
     else {
-        qWarning() << "No rpc with procedure name:" << t_procedureName;
+        if(!m_registeredRemoteProcedures.isEmpty()) {
+            qWarning() << "No rpc with procedure name:" << t_procedureName;
+            qWarning() << "Available:";
+            for(const auto &procedure : m_registeredRemoteProcedures) {
+                qWarning() << procedure;
+            }
+        }
+        else {
+            qWarning() << "No rpc procedures found";
+        }
     }
     return rpcIdentifier;
 }
