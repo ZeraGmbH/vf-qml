@@ -27,7 +27,6 @@ find_package(VfHelpers REQUIRED)
 find_package(VfEvent REQUIRED)
 find_package(VfComponent REQUIRED)
 find_package(VfNet2 REQUIRED)
-find_package(VfProtobuf REQUIRED)
 
 #sum up project Files 
 file(GLOB SOURCES 
@@ -60,7 +59,6 @@ target_link_libraries(VfQml
     VeinMeta::VfEvent
     VeinMeta::VfComponent 
     VeinMeta::VfNet2
-    VeinMeta::VfProtobuf
     )
 
 # announce headers - target perspective
