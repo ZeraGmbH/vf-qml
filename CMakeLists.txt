@@ -17,7 +17,6 @@ include(CMakePackageConfigHelpers)
 
 find_package(Qt5 COMPONENTS Core Qml CONFIG REQUIRED)
 find_package(VeinFramework REQUIRED)
-find_package(VfNet2 REQUIRED)
 
 file(GLOB SOURCES 
     ${PROJECT_SOURCE_DIR}/*.cpp
@@ -39,7 +38,7 @@ target_link_libraries(VfQml
     Zera::VfHelpers
     Zera::VfEvent
     Zera::VfComponent 
-    VeinMeta::VfNet2
+    Zera::VfNet2
     )
 
 target_include_directories(VfQml
